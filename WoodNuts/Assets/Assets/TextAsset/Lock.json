@@ -1,0 +1,109 @@
+{
+"skeleton": {
+	"hash": "7Y8skUC1Q/U",
+	"spine": "4.0.64",
+	"x": -30,
+	"y": -26,
+	"width": 58,
+	"height": 68,
+	"images": "./images/",
+	"audio": "D:/ScrewSort/Lock"
+},
+"bones": [
+	{ "name": "root" },
+	{ "name": "LockMain", "parent": "root" },
+	{ "name": "lock_1", "parent": "LockMain", "length": 18.86, "rotation": 91.19, "x": -0.66, "y": -2.79 },
+	{ "name": "lock_3", "parent": "lock_1", "x": 21.25, "y": -15.16 }
+],
+"slots": [
+	{ "name": "lock_2", "bone": "lock_3", "attachment": "Lock/lock_2" },
+	{ "name": "lock_1", "bone": "lock_1", "attachment": "Lock/lock_1" }
+],
+"skins": [
+	{
+		"name": "default",
+		"attachments": {
+			"lock_1": {
+				"Lock/lock_1": { "x": -0.21, "y": 0.34, "rotation": -91.19, "width": 58, "height": 46 }
+			},
+			"lock_2": {
+				"Lock/lock_2": { "x": 10.54, "y": 14.83, "rotation": -91.19, "width": 42, "height": 26 }
+			}
+		}
+	}
+],
+"animations": {
+	"animation": {
+		"slots": {
+			"lock_1": {
+				"rgba": [
+					{ "time": 1, "color": "ffffffff" },
+					{ "time": 1.1667, "color": "ffffff00" }
+				]
+			},
+			"lock_2": {
+				"rgba": [
+					{ "time": 1, "color": "ffffffff" },
+					{ "time": 1.1667, "color": "ffffff00" }
+				]
+			}
+		},
+		"bones": {
+			"lock_1": {
+				"rotate": [
+					{},
+					{ "time": 0.2, "value": -1.26 },
+					{ "time": 0.3, "value": -11.75 },
+					{ "time": 0.4, "value": -22.44 },
+					{ "time": 0.6667, "value": -102.32 },
+					{ "time": 1.1667, "value": -180.91 }
+				],
+				"translatex": [
+					{},
+					{ "time": 0.0667, "value": 0.48 },
+					{ "time": 0.6667, "value": 51.62 },
+					{ "time": 1.1667, "value": 94.24 }
+				],
+				"translatey": [
+					{
+						"curve": [ 0.019, 11.71, 0.04, 29.08 ]
+					},
+					{
+						"time": 0.0667,
+						"value": 41.51,
+						"curve": [ 0.11, 60.69, 0.156, 85.77 ]
+					},
+					{
+						"time": 0.2,
+						"value": 94.87,
+						"curve": [ 0.267, 108.52, 0.335, 119.77 ]
+					},
+					{
+						"time": 0.4,
+						"value": 109.77,
+						"curve": [ 0.464, 100, 0.562, 59.62 ]
+					},
+					{
+						"time": 0.6667,
+						"value": -180.77,
+						"curve": [ 0.887, -683.85, 1.137, -1605.59 ]
+					},
+					{ "time": 1.1667, "value": -1747.59 }
+				],
+				"scale": [
+					{},
+					{ "time": 0.0667, "x": 1.082, "y": 0.991 },
+					{ "time": 0.2 }
+				]
+			},
+			"lock_3": {
+				"rotate": [
+					{},
+					{ "time": 0.0667, "value": 0.09 },
+					{ "time": 0.1667, "value": -56.69 }
+				]
+			}
+		}
+	}
+}
+}

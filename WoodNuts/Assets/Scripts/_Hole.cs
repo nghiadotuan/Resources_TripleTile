@@ -5,12 +5,17 @@ using UnityEngine;
 public class _Hole : MonoBehaviour
 {
     public _Screw Screw;
+    public bool IsEmpty { get; set; }
 
     private void OnMouseDown()
     {
         if (Screw == null)
         {
-            if (_GameManager.Instance.CurrentScrew == null) return;
+            if (_GameManager.Instance.CurrentScrew == null)
+            {
+                IsEmpty = true;
+                return;
+            }
             Screw = _GameManager.Instance.CurrentScrew;
             var pos = transform.position;
             pos.y += .5f;
@@ -19,6 +24,7 @@ public class _Hole : MonoBehaviour
                 .SetEase(Ease.Linear)
                 .OnComplete(() => Screw.State = _StateScrew.FitUp);
             _GameManager.Instance.CurrentScrew = null;
+            IsEmpty = false;
         }
         else
         {
@@ -33,6 +39,7 @@ public class _Hole : MonoBehaviour
 
             _GameManager.Instance.CurrentScrew = Screw;
             Screw = null;
+            IsEmpty = true;
         }
     }
 

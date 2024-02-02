@@ -46,7 +46,7 @@ namespace ToolEditor.Level
             var prefabMaskHole = Resources.Load<GameObject>("MaskBar");
             foreach (var hole in listHoles)
             {
-                prefabMaskHole.CreateGameObject(hole.position, Quaternion.identity, transform);
+               var maskHole = prefabMaskHole.CreateGameObject(hole.position, Quaternion.identity, transform);
             }
         }
 
@@ -70,8 +70,8 @@ namespace ToolEditor.Level
         [Button]
         private void Set()
         {
-            CreateMaskBar(_listHoles);
             SetPosBar(_listHoles);
+            CreateMaskBar(_listHoles);
             SetSizeBar(_listHoles);
             SetComponent();
         }

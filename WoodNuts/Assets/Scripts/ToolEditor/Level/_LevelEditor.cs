@@ -47,13 +47,13 @@ namespace ToolEditor.Level
             CreateLevelGameObject(NameLevel);
         }
 
-        private _Hole EmptyHole()
+        private _HoleEditor EmptyHole()
         {
             CheckExistLevel();
             var prefab = Resources.Load<GameObject>("Hole");
             var hole = prefab.CreateGameObject(_level.transform);
             hole.name = "EmptyHole";
-            return hole.GetComponent<_Hole>();
+            return hole.GetComponent<_HoleEditor>();
         }
 
         private _Screw CreateScrew()
@@ -74,8 +74,8 @@ namespace ToolEditor.Level
         private void CreateHoleHasScrew()
         {
             var hole = EmptyHole();
+            hole.name = "Hole";
             var screw = CreateScrew();
-            hole.Screw = screw;
             if (hole.TryGetComponent<_HoleEditor>(out var holeEditor))
             {
                 holeEditor.Screw = screw.transform;

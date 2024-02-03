@@ -5,7 +5,7 @@ using UnityEngine;
 namespace ToolEditor.Level
 {
     [ExecuteInEditMode]
-    public class _HoleEditor : MonoBehaviour
+    public class _HoleEditor : MonoBehaviour, _ISetAble
     {
 #if UNITY_EDITOR
 
@@ -18,6 +18,19 @@ namespace ToolEditor.Level
                 Screw.position = transform.position;
         }
 
+        public void Set()
+        {
+            if(Screw == null) return;
+            if (TryGetComponent<_Hole>(out var hole))
+            {
+                hole.Screw = Screw.GetComponent<_Screw>();
+            }
+            else
+            {
+                gameObject.AddComponent<_Hole>().Screw = Screw.GetComponent<_Screw>();
+            }
+        }
+        
 #endif
     }
 }

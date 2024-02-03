@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class _Hole : MonoBehaviour
 {
-    public _Screw Screw;
-    public bool IsEmpty { get; set; }
+    private static int _count;
 
-    private void OnMouseDown()
+    public _Screw Screw;
+    [ShowInInspector] public bool IsEmpty { get; set; }
+
+    public void OnClick()
     {
         if (Screw == null)
         {
@@ -16,6 +18,7 @@ public class _Hole : MonoBehaviour
                 IsEmpty = true;
                 return;
             }
+
             Screw = _GameManager.Instance.CurrentScrew;
             var pos = transform.position;
             pos.y += .5f;
@@ -24,7 +27,9 @@ public class _Hole : MonoBehaviour
                 .SetEase(Ease.Linear)
                 .OnComplete(() => Screw.State = _StateScrew.FitUp);
             _GameManager.Instance.CurrentScrew = null;
+            _GameManager.Instance.CurrentHole = null;
             IsEmpty = false;
+            _count++;
         }
         else
         {
@@ -36,10 +41,20 @@ public class _Hole : MonoBehaviour
             {
                 _GameManager.Instance.CurrentScrew.State = _StateScrew.FitUp;
             }
-
+            
+            _GameManager.Instance.CurrentHole = this;
             _GameManager.Instance.CurrentScrew = Screw;
             Screw = null;
             IsEmpty = true;
+            _count++;
+        }
+
+        if (_count % 2 == 0)
+        {
+            var bar = FindObjectOfType<_Bar>();
+            bar.UpdateState();
+            _GameManager.Instance.CurrentHole.GetComponent<Collider2D>().enabled = false;
+            GetComponent<Collider2D>().enabled = true;
         }
     }
 

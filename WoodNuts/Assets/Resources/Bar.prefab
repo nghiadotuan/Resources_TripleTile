@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 5864280411934999280}
   - component: {fileID: 1450809664276037481}
   - component: {fileID: 3646920951609134761}
+  - component: {fileID: 3038564898143239491}
   m_Layer: 6
   m_Name: Bar
   m_TagString: Iron
@@ -187,9 +188,9 @@ BoxCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
-    border: {x: 0.38, y: 0.38, z: 0.42999998, w: 0.38}
+    border: {x: 0.29999998, y: 0.29999998, z: 0.29999998, w: 0.29999998}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 10, y: 6.6}
+    oldSize: {x: 9.91, y: 6.56}
     newSize: {x: 4.3740335, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 1
@@ -213,3 +214,16 @@ MonoBehaviour:
   _listHoles:
   - {fileID: 0}
   - {fileID: 0}
+--- !u!114 &3038564898143239491
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2932412233475621235}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38dfe370a11a45fa9d6949b295dd7517, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _listHole: []

@@ -5,12 +5,12 @@ using UnityEngine;
 
 namespace ToolEditor.Level
 {
-    public class _SquareBarEditor : MonoBehaviour
+    public class _SquareBarEditor : MonoBehaviour, _ISetAble
     {
 #if UNITY_EDITOR
 
         [SerializeField] private List<Transform> _listHoles;
-        
+
         private void SetPosBar(List<Transform> listHoles)
         {
             var pointStart = listHoles[0].position;
@@ -46,7 +46,7 @@ namespace ToolEditor.Level
             var prefabMaskHole = Resources.Load<GameObject>("MaskBar");
             foreach (var hole in listHoles)
             {
-               var maskHole = prefabMaskHole.CreateGameObject(hole.position, Quaternion.identity, transform);
+                var maskHole = prefabMaskHole.CreateGameObject(hole.position, Quaternion.identity, transform);
             }
         }
 
@@ -60,7 +60,7 @@ namespace ToolEditor.Level
             spriteRenderer.drawMode = SpriteDrawMode.Sliced;
             spriteRenderer.size = new Vector2(distance + 1, 1);
         }
-        
+
         private void SetComponent()
         {
             GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Kinematic;
@@ -68,7 +68,7 @@ namespace ToolEditor.Level
         }
 
         [Button]
-        private void Set()
+        private void SetBar()
         {
             SetPosBar(_listHoles);
             CreateMaskBar(_listHoles);
@@ -83,6 +83,24 @@ namespace ToolEditor.Level
             var spriteRenderer = GetComponent<SpriteRenderer>();
             collier.size = spriteRenderer.size;
         }
+
+        public void Set()
+        {
+            var list = new List<_Hole>();
+            foreach (var hole in _listHoles)
+            {
+                list.Add(hole.GetComponent<_Hole>());
+            }
+            if (TryGetComponent<_Bar>(out var bar))
+            {
+                bar.SetData(list);
+            }
+            else
+            {
+                gameObject.AddComponent<_Bar>().SetData(list);
+            }
+        }
+
 #endif
     }
 }

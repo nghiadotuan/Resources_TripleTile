@@ -23,9 +23,13 @@ public class _Bar : MonoBehaviour
         if (_listHole == null) return;
         if (_listHole.Count <= 0) return;
         var numScrew = _listHole.Count(hole => hole.IsEmpty);
+        Debug.LogError(numScrew);
         switch (numScrew)
         {
             case 0:
+                _hingeJoint.connectedBody = null;
+                _hingeJoint.autoConfigureConnectedAnchor = false;
+                _hingeJoint.enabled = false;
                 _rig.bodyType = RigidbodyType2D.Dynamic;
                 break;
             case 1:
@@ -104,13 +108,14 @@ public class _Bar : MonoBehaviour
     }
 
     [Button]
-    private void SetBar( List<_Hole> holes)
+    private void SetBar(List<_Hole> holes)
     {
         var listChild = transform.GetComponentsInChildren<SpriteMask>();
         foreach (var child in listChild)
         {
             DestroyImmediate(child.gameObject);
         }
+
         var prefabMaskHole = Resources.Load("MaskBar");
         for (var i = 0; i < holes.Count; i++)
         {
@@ -118,5 +123,10 @@ public class _Bar : MonoBehaviour
         }
 
         SetPosBar(holes[0], holes[^1]);
+    }
+
+    public void SetData(List<_Hole> listHole)
+    {
+        _listHole = listHole;
     }
 }

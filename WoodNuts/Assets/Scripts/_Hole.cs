@@ -11,6 +11,7 @@ public class _Hole : MonoBehaviour
 
     public void OnClick()
     {
+        _count++;
         if (Screw == null)
         {
             if (_GameManager.Instance.CurrentScrew == null)
@@ -27,9 +28,10 @@ public class _Hole : MonoBehaviour
                 .SetEase(Ease.Linear)
                 .OnComplete(() => Screw.State = _StateScrew.FitUp);
             _GameManager.Instance.CurrentScrew = null;
+            if (_GameManager.Instance.CurrentHole != null)
+                _GameManager.Instance.CurrentHole.GetComponent<Collider2D>().enabled = false;
             _GameManager.Instance.CurrentHole = null;
             IsEmpty = false;
-            _count++;
         }
         else
         {
@@ -41,19 +43,17 @@ public class _Hole : MonoBehaviour
             {
                 _GameManager.Instance.CurrentScrew.State = _StateScrew.FitUp;
             }
-            
+
             _GameManager.Instance.CurrentHole = this;
             _GameManager.Instance.CurrentScrew = Screw;
             Screw = null;
             IsEmpty = true;
-            _count++;
         }
 
         if (_count % 2 == 0)
         {
             var bar = FindObjectOfType<_Bar>();
             bar.UpdateState();
-            _GameManager.Instance.CurrentHole.GetComponent<Collider2D>().enabled = false;
             GetComponent<Collider2D>().enabled = true;
         }
     }

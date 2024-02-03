@@ -18,11 +18,26 @@ public class _Bar : MonoBehaviour
         _rig.bodyType = RigidbodyType2D.Kinematic;
     }
 
+    private int NumScrew
+    {
+        get
+        {
+            if (_listHole == null) return 0;
+            if (_listHole.Count <= 0) return 0;
+            var result = 0;
+            foreach (var hole in _listHole)
+            {
+                var collider = hole.GetComponent<Collider2D>();
+                if (collider.enabled) result++;
+            }
+
+            return result;
+        }
+    }
+
     public void UpdateState()
     {
-        if (_listHole == null) return;
-        if (_listHole.Count <= 0) return;
-        var numScrew = _listHole.Count(hole => hole.IsEmpty);
+        var numScrew = NumScrew;
         Debug.LogError(numScrew);
         switch (numScrew)
         {

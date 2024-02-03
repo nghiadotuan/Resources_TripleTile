@@ -18,6 +18,11 @@ public class _Bar : MonoBehaviour
         _rig.bodyType = RigidbodyType2D.Kinematic;
     }
 
+    private bool IsColliderInsideAnotherCollider(Collider2D parent, Collider2D check)
+    {
+        return Physics2D.IsTouching(parent, check);
+    }
+    
     private int NumScrew
     {
         get
@@ -27,8 +32,13 @@ public class _Bar : MonoBehaviour
             var result = 0;
             foreach (var hole in _listHole)
             {
-                var collider = hole.GetComponent<Collider2D>();
-                if (collider.enabled) result++;
+                var circleCollider2D = hole.GetComponent<CircleCollider2D>();
+                if (circleCollider2D.enabled)
+                {
+                    var box = GetComponent<BoxCollider2D>();
+                    if(IsColliderInsideAnotherCollider(box, circleCollider2D)) continue;
+                    result++;
+                }
             }
 
             return result;

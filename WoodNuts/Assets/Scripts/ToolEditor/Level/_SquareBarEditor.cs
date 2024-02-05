@@ -47,6 +47,7 @@ namespace ToolEditor.Level
             foreach (var hole in listHoles)
             {
                 var maskHole = prefabMaskHole.CreateGameObject(hole.position, Quaternion.identity, transform);
+                maskHole.GetComponent<_MaskBar>().SetHole(hole);
             }
         }
 
@@ -58,7 +59,7 @@ namespace ToolEditor.Level
             var distance = Vector3.Distance(pointStart, pointEnd);
             var spriteRenderer = GetComponent<SpriteRenderer>();
             spriteRenderer.drawMode = SpriteDrawMode.Sliced;
-            spriteRenderer.size = new Vector2(distance + 1, 1);
+            spriteRenderer.size = new Vector2(distance + 1, spriteRenderer.size.y);
         }
 
         private void SetComponent()
@@ -79,9 +80,21 @@ namespace ToolEditor.Level
         [Button]
         private void SetSizeCollider()
         {
-            var collier = GetComponent<BoxCollider2D>();
+            var collier = GetComponent<CapsuleCollider2D>();
+            collier.direction = CapsuleDirection2D.Horizontal;
+            collier.offset = Vector2.zero;
             var spriteRenderer = GetComponent<SpriteRenderer>();
             collier.size = spriteRenderer.size;
+        }
+
+        [Button]
+        private void SetLayer(int layer)
+        {
+            gameObject.layer = layer + 5;
+            var pos = transform.position;
+            pos.z = 0;
+            pos.z += (5 - layer) * .1f;
+            transform.position = pos;
         }
 
         public void Set()
@@ -91,6 +104,7 @@ namespace ToolEditor.Level
             {
                 list.Add(hole.GetComponent<_Hole>());
             }
+
             if (TryGetComponent<_Bar>(out var bar))
             {
                 bar.SetData(list);

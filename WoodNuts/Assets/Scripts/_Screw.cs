@@ -1,24 +1,37 @@
-﻿using UnityEngine;
+﻿using System;
+using DG.Tweening;
+using Sirenix.OdinInspector;
+using UnityEngine;
 
 public class _Screw : MonoBehaviour
 {
     [SerializeField] private GameObject _body;
+    [ShowInInspector] private bool _isNailed;
 
-    private _StateScrew _state;
-
-    public _StateScrew State
+    private void Awake()
     {
-        get => _state;
-        set
+        _isNailed = true;
+    }
+
+    public void UpdateState()
+    {
+        transform.DOKill();
+        _isNailed = !_isNailed;
+        var posStart = transform.position;
+        var posEnd = posStart;
+        posEnd.y += .5f;
+        if (_isNailed)
         {
-            _state = value;
-            _body.SetActive(_state == _StateScrew.Loose);
+            _body.SetActive(_isNailed);
+            transform.DOMove(posStart, .05f)
+                .From(posEnd)
+                .SetEase(Ease.Linear)
+                .OnComplete(() => _body.SetActive(false));
+        }
+        else
+        {
+            transform.position = posEnd;
+            _body.SetActive(true);
         }
     }
-}
-
-public enum _StateScrew : byte
-{
-    FitUp,
-    Loose
 }

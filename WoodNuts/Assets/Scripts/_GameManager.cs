@@ -5,7 +5,7 @@ public class _GameManager : MonoBehaviour
 {
     public static _GameManager Instance;
     
-    public _Screw CurrentScrew;
+    //public _Screw CurrentScrew;
     public _Hole CurrentHole;
 
     private void Awake()

@@ -10,35 +10,57 @@ public class _Bar : MonoBehaviour
 
     private Rigidbody2D _rig;
     private HingeJoint2D _hingeJoint;
+    private List<_MaskBar> _listMaskBar;
+
+    public List<_MaskBar> ListMaskBar => _listMaskBar;
 
     private void Awake()
     {
         _rig = GetComponent<Rigidbody2D>();
         _hingeJoint = GetComponent<HingeJoint2D>();
         _rig.bodyType = RigidbodyType2D.Kinematic;
+        _listMaskBar = transform.GetComponentsInChildren<_MaskBar>().ToList();
     }
 
     private bool IsColliderInsideAnotherCollider(Collider2D parent, Collider2D check)
     {
         return Physics2D.IsTouching(parent, check);
     }
-    
+
+    // private int NumScrew
+    // {
+    //     get
+    //     {
+    //         if (_listHole == null) return 0;
+    //         if (_listHole.Count <= 0) return 0;
+    //         var result = 0;
+    //         foreach (var hole in _listHole)
+    //         {
+    //             var circleCollider2D = hole.GetComponent<CircleCollider2D>();
+    //             if (circleCollider2D.enabled)
+    //             {
+    //                 var box = GetComponent<BoxCollider2D>();
+    //                 if(IsColliderInsideAnotherCollider(box, circleCollider2D)) continue;
+    //                 result++;
+    //             }
+    //         }
+    //
+    //         return result;
+    //     }
+    // }
+
     private int NumScrew
     {
         get
         {
-            if (_listHole == null) return 0;
-            if (_listHole.Count <= 0) return 0;
+            if (_listMaskBar == null) return 0;
+            if (_listMaskBar.Count <= 0) return 0;
             var result = 0;
-            foreach (var hole in _listHole)
+            foreach (var maskBar in _listMaskBar)
             {
-                var circleCollider2D = hole.GetComponent<CircleCollider2D>();
-                if (circleCollider2D.enabled)
-                {
-                    var box = GetComponent<BoxCollider2D>();
-                    if(IsColliderInsideAnotherCollider(box, circleCollider2D)) continue;
-                    result++;
-                }
+                if (!maskBar.IsMaskBarIntoHole()) continue;
+                if (maskBar.Hole.Screw == null) continue;
+                result++;
             }
 
             return result;
@@ -48,7 +70,6 @@ public class _Bar : MonoBehaviour
     public void UpdateState()
     {
         var numScrew = NumScrew;
-        Debug.LogError(numScrew);
         switch (numScrew)
         {
             case 0:
@@ -73,7 +94,7 @@ public class _Bar : MonoBehaviour
         _hingeJoint.anchor = _rig.transform.InverseTransformPoint(rig.transform.position);
         _hingeJoint.connectedAnchor = _rig.transform.InverseTransformPoint(rig.transform.position);
         _hingeJoint.autoConfigureConnectedAnchor = true;
-        _hingeJoint.useMotor = true;
+        // _hingeJoint.useMotor = true;
         _hingeJoint.motor = new JointMotor2D {motorSpeed = 10, maxMotorTorque = 1000};
         _rig.bodyType = RigidbodyType2D.Dynamic;
         yield return new WaitForSeconds(0.2f);
@@ -84,7 +105,7 @@ public class _Bar : MonoBehaviour
     {
         foreach (var hole in _listHole)
         {
-            if (hole.IsEmpty) continue;
+            if (hole.Screw == null) continue;
             return hole;
         }
 
@@ -141,10 +162,11 @@ public class _Bar : MonoBehaviour
             DestroyImmediate(child.gameObject);
         }
 
-        var prefabMaskHole = Resources.Load("MaskBar");
-        for (var i = 0; i < holes.Count; i++)
+        var prefabMaskHole = Resources.Load<GameObject>("MaskBar");
+        foreach (var hole in holes)
         {
-            var maskBar = Instantiate(prefabMaskHole, holes[i].transform.position, Quaternion.identity, transform);
+            var maskBar = Instantiate(prefabMaskHole, hole.transform.position, Quaternion.identity, transform);
+            maskBar.GetComponent<_MaskBar>().SetHole(hole.transform);
         }
 
         SetPosBar(holes[0], holes[^1]);

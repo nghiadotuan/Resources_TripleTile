@@ -1,68 +1,122 @@
-using DG.Tweening;
-using Sirenix.OdinInspector;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class _Hole : MonoBehaviour
 {
     private static int _count;
 
+    private readonly List<Collider2D> _listCollider = new();
+
     public _Screw Screw;
-    [ShowInInspector] public bool IsEmpty { get; set; }
 
     public void OnClick()
     {
-        _count++;
+        if (_listCollider.Count > 0) return;
+        var gameManager = _GameManager.Instance;
+        if (gameManager == null) return;
         if (Screw == null)
         {
-            if (_GameManager.Instance.CurrentScrew == null)
+            if (gameManager.CurrentHole == null)
             {
-                IsEmpty = true;
+                UpdateCollider();
                 return;
             }
 
-            Screw = _GameManager.Instance.CurrentScrew;
-            var pos = transform.position;
-            pos.y += .5f;
-            Screw.transform.DOMove(transform.position, .05f)
-                .From(pos)
-                .SetEase(Ease.Linear)
-                .OnComplete(() => Screw.State = _StateScrew.FitUp);
-            _GameManager.Instance.CurrentScrew = null;
-            if (_GameManager.Instance.CurrentHole != null)
-                _GameManager.Instance.CurrentHole.GetComponent<Collider2D>().enabled = false;
-            _GameManager.Instance.CurrentHole = null;
-            IsEmpty = false;
+            _count++;
+            Screw = gameManager.CurrentHole.Screw;
+            SetScrew();
+            gameManager.CurrentHole.Screw = null;
+            gameManager.CurrentHole.UpdateCollider();
+            gameManager.CurrentHole = null;
         }
         else
         {
-            Screw.State = _StateScrew.Loose;
-            var pos = Screw.transform.position;
-            pos.y += .5f;
-            Screw.transform.position = pos;
-            if (_GameManager.Instance.CurrentScrew != null)
+            if (_GameManager.Instance.CurrentHole != null)
             {
-                _GameManager.Instance.CurrentScrew.State = _StateScrew.FitUp;
+                _count++;
+                if (gameManager.CurrentHole != this)
+                {
+                    _count--;
+                    gameManager.CurrentHole.SetScrew();
+                    gameManager.CurrentHole = this;
+                    gameManager.CurrentHole.SetScrew();
+                }
+                else
+                {
+                    _count = 0;
+                    gameManager.CurrentHole.SetScrew();
+                    gameManager.CurrentHole = null;
+                }
+            }
+            else
+            {
+                SetScrew();
+                gameManager.CurrentHole = this;
+                _count++;
             }
 
-            _GameManager.Instance.CurrentHole = this;
-            _GameManager.Instance.CurrentScrew = Screw;
-            Screw = null;
-            IsEmpty = true;
+            UpdateCollider();
         }
 
         if (_count % 2 == 0)
         {
-            var bar = FindObjectOfType<_Bar>();
-            bar.UpdateState();
-            GetComponent<Collider2D>().enabled = true;
+            if (_GameManager.Instance.CurrentHole != null)
+                _GameManager.Instance.CurrentHole.Screw = null;
+            var bars = FindObjectsByType<_Bar>(FindObjectsSortMode.None);
+            foreach (var bar in bars)
+            {
+                bar.UpdateState();
+            }
+
+            UpdateCollider();
+            _count = 0;
         }
     }
 
-    [Button]
     private void SetScrew()
     {
         if (Screw == null) return;
         Screw.transform.position = transform.position;
-        Screw.State = _StateScrew.Loose;
+        Screw.UpdateState();
+    }
+
+    private void UpdateCollider()
+    {
+        GetComponent<CircleCollider2D>().isTrigger = Screw == null;
+    }
+
+    private void OnTriggerStay2D(Collider2D other)
+    {
+        Debug.Log(other.name + "  " + gameObject.name);
+        if (other.TryGetComponent<_Bar>(out var bar))
+        {
+            foreach (var maskBar in bar.ListMaskBar)
+            {
+                if (maskBar.Hole.Screw != null) continue;
+                var vt = transform.position - maskBar.transform.position;
+                vt.z = 0;
+                var distance = Vector2.SqrMagnitude(vt);
+                if (distance > _Const.EPSILON)
+                {
+                    if (!_listCollider.Contains(other))
+                        _listCollider.Add(other);
+                }
+                else
+                {
+                    if (_listCollider.Contains(other))
+                    {
+                        _listCollider.Remove(other);
+                    }
+                }
+            }
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (_listCollider.Contains(other))
+        {
+            _listCollider.Remove(other);
+        }
     }
 }

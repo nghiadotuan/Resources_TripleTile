@@ -111,7 +111,6 @@ namespace ToolEditor.Level
             var pos = RectTransformUtility.WorldToScreenPoint(Camera.main, hole.transform.position);
             var btn = prefab.CreateGameObject(pos: pos, canvas);
             btn.GetComponent<Button>().onClick.AddListener(hole.OnClick);
-            Debug.Log(btn.name + "  " + btn.name);
         }
 
         [Button]

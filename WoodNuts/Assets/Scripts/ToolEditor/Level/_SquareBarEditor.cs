@@ -7,7 +7,6 @@ namespace ToolEditor.Level
 {
     public class _SquareBarEditor : MonoBehaviour, _ISetAble
     {
-#if UNITY_EDITOR
 
         [SerializeField] private List<Transform> _listHoles;
 
@@ -115,6 +114,5 @@ namespace ToolEditor.Level
             }
         }
 
-#endif
     }
 }

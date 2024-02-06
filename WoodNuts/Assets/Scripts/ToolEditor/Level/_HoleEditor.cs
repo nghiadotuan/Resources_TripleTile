@@ -7,13 +7,14 @@ namespace ToolEditor.Level
     [ExecuteInEditMode]
     public class _HoleEditor : MonoBehaviour, _ISetAble
     {
-#if UNITY_EDITOR
 
         [ShowInInspector] public Transform Screw { get; set; }
 
         private void Update()
         {
+            #if UNITY_EDITOR
             if (EditorApplication.isPlaying) return;
+            #endif
             if (Screw != null)
                 Screw.position = transform.position;
         }
@@ -31,6 +32,5 @@ namespace ToolEditor.Level
             }
         }
         
-#endif
     }
 }

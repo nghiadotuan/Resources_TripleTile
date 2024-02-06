@@ -35,6 +35,7 @@ public class _Bar : MonoBehaviour
                 if (!maskBar.IsMaskBarIntoHole()) continue;
                 if (maskBar.Hole.Screw == null) continue;
                 result++;
+                if (result >= 2) return result;
             }
 
             return result;
@@ -65,6 +66,7 @@ public class _Bar : MonoBehaviour
     {
         _hingeJoint.enabled = true;
         var rig = GetHoleHasScrew().GetComponent<Rigidbody2D>();
+        if (rig == _hingeJoint.connectedBody) yield break;
         _hingeJoint.connectedBody = rig;
         _hingeJoint.anchor = _rig.transform.InverseTransformPoint(rig.transform.position);
         _hingeJoint.connectedAnchor = _rig.transform.InverseTransformPoint(rig.transform.position);
@@ -125,19 +127,20 @@ public class _Bar : MonoBehaviour
 
     private _Hole GetHoleHasScrew()
     {
-        foreach (var hole in ListHole)
+        var listHole = FindObjectsByType<_Hole>(FindObjectsSortMode.None);
+        foreach (var hole in listHole)
         {
-            if (hole.Screw == null) continue;
-            return hole;
+            if (hole.Screw is null) continue;
+            foreach (var maskBar in _listMaskBar)
+            {
+                var vt = maskBar.transform.position - hole.transform.position;
+                if (Vector2.SqrMagnitude(vt) > _Const.EPSILON) continue;
+                return hole;
+            }
         }
 
         Debug.LogError("Error: can't null hole in case. Consider logic here!!!");
         return null;
-    }
-
-    private void OnCollisionEnter2D(Collision2D other)
-    {
-        //TODO: xet va cham voi bottom level. 
     }
 
     [Button]
@@ -197,9 +200,5 @@ public class _Bar : MonoBehaviour
     public void SetData(List<_Hole> listHole)
     {
         ListHole = listHole;
-    }
-
-    private void SetPosBar()
-    {
     }
 }

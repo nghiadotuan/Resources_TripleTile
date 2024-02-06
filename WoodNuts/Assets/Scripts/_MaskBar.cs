@@ -13,6 +13,7 @@ public class _MaskBar : MonoBehaviour
     {
         var vt = _hole.position - transform.position;
         vt.z = 0;
+        Debug.Log(Vector2.SqrMagnitude(vt) + "  " + vt + "  "+ _hole.name, this);
         return Vector2.SqrMagnitude(vt) < _Const.EPSILON;
     }
 

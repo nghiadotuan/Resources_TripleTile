@@ -6,11 +6,12 @@ using UnityEngine;
 
 public class _Bar : MonoBehaviour
 {
-    [SerializeField] private List<_Hole> _listHole;
+    public List<_Hole> ListHole;
 
     private Rigidbody2D _rig;
     private HingeJoint2D _hingeJoint;
     private List<_MaskBar> _listMaskBar;
+
 
     public List<_MaskBar> ListMaskBar => _listMaskBar;
 
@@ -21,33 +22,6 @@ public class _Bar : MonoBehaviour
         _rig.bodyType = RigidbodyType2D.Kinematic;
         _listMaskBar = transform.GetComponentsInChildren<_MaskBar>().ToList();
     }
-
-    private bool IsColliderInsideAnotherCollider(Collider2D parent, Collider2D check)
-    {
-        return Physics2D.IsTouching(parent, check);
-    }
-
-    // private int NumScrew
-    // {
-    //     get
-    //     {
-    //         if (_listHole == null) return 0;
-    //         if (_listHole.Count <= 0) return 0;
-    //         var result = 0;
-    //         foreach (var hole in _listHole)
-    //         {
-    //             var circleCollider2D = hole.GetComponent<CircleCollider2D>();
-    //             if (circleCollider2D.enabled)
-    //             {
-    //                 var box = GetComponent<BoxCollider2D>();
-    //                 if(IsColliderInsideAnotherCollider(box, circleCollider2D)) continue;
-    //                 result++;
-    //             }
-    //         }
-    //
-    //         return result;
-    //     }
-    // }
 
     private int NumScrew
     {
@@ -82,13 +56,14 @@ public class _Bar : MonoBehaviour
                 StartCoroutine(WaitSetStateHingeJoint());
                 break;
             default:
-                _rig.bodyType = RigidbodyType2D.Kinematic;
+                SetRotateBar();
                 break;
         }
     }
 
     private IEnumerator WaitSetStateHingeJoint()
     {
+        _hingeJoint.enabled = true;
         var rig = GetHoleHasScrew().GetComponent<Rigidbody2D>();
         _hingeJoint.connectedBody = rig;
         _hingeJoint.anchor = _rig.transform.InverseTransformPoint(rig.transform.position);
@@ -97,13 +72,60 @@ public class _Bar : MonoBehaviour
         // _hingeJoint.useMotor = true;
         _hingeJoint.motor = new JointMotor2D {motorSpeed = 10, maxMotorTorque = 1000};
         _rig.bodyType = RigidbodyType2D.Dynamic;
+        _rig.simulated = true;
         yield return new WaitForSeconds(0.2f);
         _hingeJoint.useMotor = false;
     }
 
+    // set lai vi tri va goc xoay khi bar duoc co dinh lai = 2 dinh
+    private void SetRotateBar()
+    {
+        _hingeJoint.enabled = false;
+        _rig.simulated = false;
+        _rig.bodyType = RigidbodyType2D.Kinematic;
+        Vector3 pos1 = default;
+        Vector3 pos2 = default;
+        bool isSetPos1 = false;
+        bool isLogicCorrect = false;
+        foreach (var hole in ListHole)
+        {
+            if (hole.Screw == null) continue;
+            if (!isSetPos1)
+            {
+                isSetPos1 = true;
+                pos1 = hole.transform.position;
+            }
+            else
+            {
+                pos2 = hole.transform.position;
+                isLogicCorrect = true;
+                break;
+            }
+        }
+
+        if (!isLogicCorrect)
+        {
+            Debug.LogError("Logic is incorrect!!!, can't get min 2 hole has screw  " + gameObject.name);
+        }
+        else
+        {
+            Debug.Log("<color=green> Logic is correct, yeah!!!    </color>" + gameObject.name);
+        }
+
+        var angleRadians = Mathf.Atan2(pos2.y - pos1.y, pos2.x - pos1.x);
+        var angleDegrees = angleRadians * Mathf.Rad2Deg;
+        if (angleDegrees < 0)
+        {
+            angleDegrees += 360;
+        }
+
+        var rot = Quaternion.Euler(0, 0, angleDegrees);
+        transform.rotation = rot;
+    }
+
     private _Hole GetHoleHasScrew()
     {
-        foreach (var hole in _listHole)
+        foreach (var hole in ListHole)
         {
             if (hole.Screw == null) continue;
             return hole;
@@ -174,6 +196,10 @@ public class _Bar : MonoBehaviour
 
     public void SetData(List<_Hole> listHole)
     {
-        _listHole = listHole;
+        ListHole = listHole;
+    }
+
+    private void SetPosBar()
+    {
     }
 }

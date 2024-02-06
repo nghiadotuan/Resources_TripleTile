@@ -43,7 +43,7 @@ namespace ToolEditor.Level
             }
 
             // create
-            var prefabMaskHole = Resources.Load<GameObject>("MaskBar");
+            var prefabMaskHole = Resources.Load<GameObject>(_Const.PATH_MASK_BAR);
             foreach (var hole in listHoles)
             {
                 var maskHole = prefabMaskHole.CreateGameObject(hole.position, Quaternion.identity, transform);

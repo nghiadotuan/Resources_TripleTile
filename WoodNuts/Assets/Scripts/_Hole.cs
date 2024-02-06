@@ -13,6 +13,7 @@ public class _Hole : MonoBehaviour
     {
         if (_listCollider.Count > 0) return;
         var gameManager = _GameManager.Instance;
+        if(gameManager.IsWin) return;
         if (gameManager == null) return;
         if (Screw == null)
         {
@@ -87,7 +88,6 @@ public class _Hole : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D other)
     {
-        Debug.Log(other.name + "  " + gameObject.name);
         if (other.TryGetComponent<_Bar>(out var bar))
         {
             foreach (var maskBar in bar.ListMaskBar)
@@ -106,6 +106,12 @@ public class _Hole : MonoBehaviour
                     if (_listCollider.Contains(other))
                     {
                         _listCollider.Remove(other);
+                    }
+
+                    if (other.TryGetComponent<_Bar>(out var tempBar))
+                    {
+                        if (!tempBar.ListHole.Contains(this))
+                            tempBar.ListHole.Add(this);
                     }
                 }
             }

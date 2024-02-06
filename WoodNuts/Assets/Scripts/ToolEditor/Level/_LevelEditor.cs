@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Extensions.GameObjects;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -8,12 +9,11 @@ namespace ToolEditor.Level
 {
     public class _LevelEditor : MonoBehaviour
     {
-#if UNITY_EDITOR
-
         [SerializeField] private int _numLevel;
 
-        private GameObject _level;
+        [ShowInInspector] private GameObject _level;
         private int _numCountHoleScrew;
+        private int _numCountBar;
 
         private string NameLevel
         {
@@ -35,15 +35,16 @@ namespace ToolEditor.Level
         private void CreateLevelGameObject(string nameLevel)
         {
             _numCountHoleScrew = 0;
+            _numCountBar = 0;
             _level = new GameObject(nameLevel);
             _level.transform.SetParent(transform);
             // create bg
-            var prefabBg = Resources.Load<GameObject>("BackGround");
+            var prefabBg = Resources.Load<GameObject>(_Const.PATH_BACK_GROUND);
             var bg = prefabBg.CreateGameObject(Vector3.zero, prefabBg.transform.rotation, _level.transform);
             bg.name = "BackGround";
 
             // create canvas
-            var prefabCanvas = Resources.Load<GameObject>("Canvas");
+            var prefabCanvas = Resources.Load<GameObject>(_Const.PATH_CANVAS);
             var canvas = prefabCanvas.CreateGameObject(_level.transform);
             canvas.name = "Canvas";
             canvas.GetComponent<Canvas>().worldCamera = Camera.main;
@@ -58,14 +59,14 @@ namespace ToolEditor.Level
         private _HoleEditor EmptyHole()
         {
             CheckExistLevel();
-            var prefab = Resources.Load<GameObject>("Hole");
+            var prefab = Resources.Load<GameObject>(_Const.PATH_HOLE);
             var hole = prefab.CreateGameObject(_level.transform);
             hole.name = "EmptyHole";
             return hole.GetComponent<_HoleEditor>();
         }
 
         private _Screw CreateScrew()
-            => Resources.Load<GameObject>("Screw").CreateGameObject(_level.transform).GetComponent<_Screw>();
+            => Resources.Load<GameObject>(_Const.PATH_SCREW).CreateGameObject(_level.transform).GetComponent<_Screw>();
 
         [Button]
         private void CreateEmptyHole()
@@ -90,38 +91,34 @@ namespace ToolEditor.Level
         [Button]
         private void CreateBar()
         {
-            var prefab = Resources.Load<GameObject>("Bar");
+            _numCountBar++;
+            var prefab = Resources.Load<GameObject>(_Const.PATH_BAR);
             var bar = prefab.CreateGameObject(_level.transform);
-            bar.name = "Bar";
+            bar.name = "Bar_" + _numCountBar;
         }
 
         // lay tat ca cac hole, ca empty hole va hole co screw
-        private List<Transform> ListHoles()
+        private List<_Hole> ListHoles()
         {
-            var list = _level.GetComponentsInChildren<_HoleEditor>();
-            var result = new List<Transform>();
-            foreach (var hole in list)
-            {
-                result.Add(hole.transform);
-            }
-
-            return result;
+            var list = _level.GetComponentsInChildren<_Hole>();
+            return list.ToList();
         }
 
         // tao button click vao hole
-        private void CreateBtn(Transform hole, Transform canvas)
+        private void CreateBtn(_Hole hole, Transform canvas)
         {
-            var prefab = Resources.Load<GameObject>("ButtonClickHole");
-            var pos = RectTransformUtility.WorldToScreenPoint(Camera.main, hole.position);
+            var prefab = Resources.Load<GameObject>(_Const.PATH_BUTTON_CLICK_HOLE);
+            var pos = RectTransformUtility.WorldToScreenPoint(Camera.main, hole.transform.position);
             var btn = prefab.CreateGameObject(pos: pos, canvas);
-            btn.GetComponent<Button>().onClick.AddListener(hole.GetComponent<_Hole>().OnClick);
+            btn.GetComponent<Button>().onClick.AddListener(hole.OnClick);
+            Debug.Log(btn.name + "  " + btn.name);
         }
 
         [Button]
-        private void Set()
+        public void Set()
         {
             // create mask hole co trong level
-            var maskHolePrefab = Resources.Load<GameObject>("MaskHole");
+            var maskHolePrefab = Resources.Load<GameObject>(_Const.PATH_MASK_HOLE);
             if (_level == null)
             {
                 _level = transform.GetChild(0).gameObject;
@@ -132,24 +129,24 @@ namespace ToolEditor.Level
                 }
             }
 
-            var bg = _level.transform.Find("BackGround");
-            var canvas = _level.transform.Find("Canvas");
+            var bg = _level.transform.Find(_Const.BACK_GROUND);
+            var canvas = _level.transform.Find(_Const.CANVAS);
 
             // delete old mask in bg
             foreach (var mask in bg.GetComponentsInChildren<SpriteMask>())
             {
                 DestroyImmediate(mask.gameObject);
             }
-            
+
             // delete old btn in canvas
             foreach (var btn in canvas.GetComponentsInChildren<Button>())
             {
                 DestroyImmediate(btn.gameObject);
             }
-            
+
             foreach (var hole in ListHoles())
             {
-                var maskHole = maskHolePrefab.CreateGameObject(hole.position, bg);
+                var maskHole = maskHolePrefab.CreateGameObject(hole.transform.position, bg);
                 maskHole.name = maskHolePrefab.name;
                 CreateBtn(hole, canvas);
             }
@@ -162,7 +159,5 @@ namespace ToolEditor.Level
                 }
             }
         }
-
-#endif
     }
 }

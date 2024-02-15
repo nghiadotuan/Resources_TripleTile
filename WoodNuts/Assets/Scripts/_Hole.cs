@@ -1,11 +1,12 @@
 using System.Collections.Generic;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class _Hole : MonoBehaviour
 {
-    private static int _count;
+    public static int Count;
 
-    private readonly List<Collider2D> _listCollider = new();
+    [ShowInInspector] private readonly List<Collider2D> _listCollider = new();
 
     public _Screw Screw;
 
@@ -13,7 +14,7 @@ public class _Hole : MonoBehaviour
     {
         if (_listCollider.Count > 0) return;
         var gameManager = _GameManager.Instance;
-        if(gameManager.IsWin) return;
+        if (gameManager.IsWin) return;
         if (gameManager == null) return;
         if (Screw == null)
         {
@@ -23,7 +24,7 @@ public class _Hole : MonoBehaviour
                 return;
             }
 
-            _count++;
+            Count++;
             Screw = gameManager.CurrentHole.Screw;
             SetScrew();
             gameManager.CurrentHole.Screw = null;
@@ -34,17 +35,17 @@ public class _Hole : MonoBehaviour
         {
             if (_GameManager.Instance.CurrentHole != null)
             {
-                _count++;
+                Count++;
                 if (gameManager.CurrentHole != this)
                 {
-                    _count--;
+                    Count--;
                     gameManager.CurrentHole.SetScrew();
                     gameManager.CurrentHole = this;
                     gameManager.CurrentHole.SetScrew();
                 }
                 else
                 {
-                    _count = 0;
+                    Count = 0;
                     gameManager.CurrentHole.SetScrew();
                     gameManager.CurrentHole = null;
                 }
@@ -53,13 +54,13 @@ public class _Hole : MonoBehaviour
             {
                 SetScrew();
                 gameManager.CurrentHole = this;
-                _count++;
+                Count++;
             }
 
             UpdateCollider();
         }
 
-        if (_count % 2 == 0)
+        if (Count % 2 == 0)
         {
             if (_GameManager.Instance.CurrentHole != null)
                 _GameManager.Instance.CurrentHole.Screw = null;
@@ -70,7 +71,7 @@ public class _Hole : MonoBehaviour
             }
 
             UpdateCollider();
-            _count = 0;
+            Count = 0;
         }
     }
 

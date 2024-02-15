@@ -55,18 +55,21 @@ public class _GameManager : MonoBehaviour
         {
             Level = 1;
         }
-        
+
+        _Hole.Count = 0;
         SceneManager.LoadScene(0);
     }
 
     public void ReStart()
     {
+        _Hole.Count = 0;
         SceneManager.LoadScene(0);
     }
     
     public void Level1()
     {
         Level = 1;
+        _Hole.Count = 0;
         SceneManager.LoadScene(0);
     }
 

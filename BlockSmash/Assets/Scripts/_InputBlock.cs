@@ -1,0 +1,40 @@
+﻿using DG.Tweening;
+using UnityEngine;
+
+public class _InputBlock : MonoBehaviour
+{
+    [SerializeField] private Transform _block;
+
+    private bool _isPick;
+
+    private void OnMouseDown()
+    {
+        _block.DOScale(1, .15f).SetEase(Ease.OutBack).From(0.68f);
+        var pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        pos.y += 3;
+        pos.z = 0;
+        _block.transform.position = pos;
+        _isPick = true;
+    }
+
+    private void Update()
+    {
+        if (!_isPick) return;
+        if (Input.GetMouseButton(0))
+        {
+            var pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            pos.y += 3;
+            pos.z = 0;
+            _block.transform.position = pos;
+            _block.GetComponent<_CreatorBlock>().ShowShadow();
+        }
+
+        if (Input.GetMouseButtonUp(0))
+        {
+            _isPick = false;
+            _block.DOScale(.68f, .1f).SetEase(Ease.Linear).From(1);
+            _block.DOMove(transform.position, .05f).SetEase(Ease.Linear);
+            _block.GetComponent<_CreatorBlock>().ResetWhenUnPick();
+        }
+    }
+}

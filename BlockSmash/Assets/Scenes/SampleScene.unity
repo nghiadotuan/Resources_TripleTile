@@ -163,7 +163,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 281073074}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.744, y: -0.124, z: 0}
+  m_LocalPosition: {x: 0, y: -7, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -298,6 +298,7 @@ GameObject:
   m_Component:
   - component: {fileID: 940125667}
   - component: {fileID: 940125668}
+  - component: {fileID: 940125669}
   m_Layer: 0
   m_Name: Block_1
   m_TagString: Untagged
@@ -346,6 +347,19 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &940125669
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 940125666}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 824dfbd651cd4e5bbfe054645cacfbd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _block: {fileID: 281073076}
 --- !u!1 &1070923352
 GameObject:
   m_ObjectHideFlags: 0
@@ -443,7 +457,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbd83aee41c960346b404415d8e3e6a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _sizeFrame: {x: 5, y: 5}
+  _sizeFrame: {x: 8, y: 8}
   _posRoot: {x: -4.35, y: -3.25}
   _distanceX: 1.24
   _distanceY: 1.23
@@ -458,13 +472,14 @@ GameObject:
   m_Component:
   - component: {fileID: 1448440938}
   - component: {fileID: 1448440937}
+  - component: {fileID: 1448440939}
   m_Layer: 0
   m_Name: Block
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!212 &1448440937
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -505,7 +520,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 2
   m_Sprite: {fileID: 21300000, guid: 43085934aedf4dc478e9c6f7018a78d0, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -532,6 +547,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1448440939
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1448440936}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ba1a756565645efb1fc824ae52cada2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1584666650
 GameObject:
   m_ObjectHideFlags: 0
@@ -542,6 +569,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1584666651}
   - component: {fileID: 1584666652}
+  - component: {fileID: 1584666653}
   m_Layer: 0
   m_Name: Block_3
   m_TagString: Untagged
@@ -590,6 +618,19 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &1584666653
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1584666650}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 824dfbd651cd4e5bbfe054645cacfbd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _block: {fileID: 281073076}
 --- !u!1 &1895756113
 GameObject:
   m_ObjectHideFlags: 0
@@ -600,6 +641,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1895756114}
   - component: {fileID: 1895756115}
+  - component: {fileID: 1895756116}
   m_Layer: 0
   m_Name: Block_2
   m_TagString: Untagged
@@ -648,3 +690,16 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &1895756116
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1895756113}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 824dfbd651cd4e5bbfe054645cacfbd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _block: {fileID: 281073076}

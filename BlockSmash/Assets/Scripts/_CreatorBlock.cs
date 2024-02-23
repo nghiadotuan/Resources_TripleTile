@@ -55,11 +55,32 @@ public class _CreatorBlock : MonoBehaviour
         {
             for (var j = 0; j != _block.GetLength(0); j++)
             {
-                if(!_block[j,i].activeInHierarchy) continue;
+                if (!_block[j, i].activeInHierarchy) continue;
                 Vector2 p = _block[j, i].transform.localPosition;
                 p -= pos;
                 _block[j, i].transform.localPosition = p;
             }
+        }
+
+        transform.localScale = Vector3.one * .68f;
+    }
+
+    public void ShowShadow()
+    {
+        foreach (var block in _block)
+        {
+            if (!block.activeInHierarchy) continue;
+            var (x,y) = _Board.Instance.ShowShadowBlock(block.transform.position);
+            block.GetComponent<_EntityBlock>().SetIdShadow(x, y);
+        }
+    }
+
+    public void ResetWhenUnPick()
+    {
+        foreach (var block in _block)
+        {
+            if (block.activeInHierarchy)
+                block.GetComponent<_EntityBlock>().ResetId();
         }
     }
 }

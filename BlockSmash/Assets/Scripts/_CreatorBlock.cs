@@ -41,10 +41,10 @@ public class _CreatorBlock : MonoBehaviour
         {
             for (var j = 0; j != _block.GetLength(0); j++)
             {
-                _block[j, i].transform.position = _dataCreateBlock.PosLocalEntityBlock[j, i];
+                _block[j, i].transform.localPosition = _dataCreateBlock.PosLocalEntityBlock[j, i];
                 _block[j, i].SetActive(shape[j, i]);
                 if (!shape[j, i]) continue;
-                pos += (Vector2) _block[j, i].transform.position;
+                pos += (Vector2) _block[j, i].transform.localPosition;
                 count++;
             }
         }
@@ -56,9 +56,9 @@ public class _CreatorBlock : MonoBehaviour
             for (var j = 0; j != _block.GetLength(0); j++)
             {
                 if(!_block[j,i].activeInHierarchy) continue;
-                Vector2 p = _block[j, i].transform.position;
+                Vector2 p = _block[j, i].transform.localPosition;
                 p -= pos;
-                _block[j, i].transform.position = p;
+                _block[j, i].transform.localPosition = p;
             }
         }
     }

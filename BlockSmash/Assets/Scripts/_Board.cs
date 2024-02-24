@@ -1,7 +1,9 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using Sirenix.OdinInspector;
 using Unity.Mathematics;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 public class _Board : MonoBehaviour
 {
@@ -12,7 +14,7 @@ public class _Board : MonoBehaviour
     [SerializeField] private GameObject _block;
 
     private List<GameObject> _listBlocks;
-    private const float _SQUARE_DISTANCE = .35f;
+    [SerializeField] private float _DISTANCE = .5f;
 
     public static _Board Instance;
 
@@ -49,12 +51,10 @@ public class _Board : MonoBehaviour
 
     private bool IsShowShadow(Vector3 pos1, Vector3 pos2)
     {
-        var x = pos1.x - pos2.x;
-        x *= x;
-        var y = pos1.y - pos2.y;
-        y *= y;
-        var squareDistance = x + y;
-        return squareDistance < _SQUARE_DISTANCE;
+        Debug.Log(Mathf.Abs(pos1.x - pos2.x) + "   "+ Mathf.Abs(pos1.y - pos2.y)  + "     "+ pos1 + "    "+ pos2);
+        if (Mathf.Abs(pos1.x - pos2.x) > _DISTANCE) return false;
+        if (Mathf.Abs(pos1.y - pos2.y) > _DISTANCE) return false;
+        return true;
     }
 
     public (byte, byte) ShowShadowBlock(Vector3 pos)
@@ -63,6 +63,7 @@ public class _Board : MonoBehaviour
         {
             for (var j = 0; j != _sizeFrame.x; j++)
             {
+                Debug.Log($"{j}x{i}");
                 var shadow = _listBlocks[i * (_sizeFrame.y - 1) + j];
                 if (!IsShowShadow(pos, shadow.transform.position)) continue;
                 shadow.SetActive(true);

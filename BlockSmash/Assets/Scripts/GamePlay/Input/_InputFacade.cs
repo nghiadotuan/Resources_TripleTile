@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace GamePlay
 {
-    public class _InputFacade : MonoBehaviour , _IUpdateAble
+    public class _InputFacade : MonoBehaviour, _IUpdateAble
     {
         private _InputBlock _inputBlock;
         private _Block _block;
@@ -14,14 +14,15 @@ namespace GamePlay
             Vector2 pos,
             Vector2 size,
             _DataCreateBlock dataCreateBlock,
-            _EntityBlockFacade prefab
+            _EntityBlockFacade prefab,
+            _BoardGame boardGame
         )
         {
             var box = gameObject.AddComponent<BoxCollider2D>();
             box.size = size;
             transform.position = pos;
-            _block = new _Block();
-            _inputBlock = new _InputBlock(cam, pos, _block.Execute(dataCreateBlock, prefab, pos));
+            _block = new _Block(dataCreateBlock, prefab, pos);
+            _inputBlock = new _InputBlock(cam, pos, _block, boardGame);
         }
 
         private void OnMouseDown()
@@ -29,10 +30,15 @@ namespace GamePlay
             _inputBlock.OnMouseDown();
         }
 
+        public void GenBlock(_ShapeBlock shape)
+        {
+            _block.GenBlock(shape);
+        }
+
 #if UNITY_EDITOR
 
         [SerializeField] private _DataGenBlockSO _data;
-        
+
         [Button]
         private void GenBlock(int index)
         {

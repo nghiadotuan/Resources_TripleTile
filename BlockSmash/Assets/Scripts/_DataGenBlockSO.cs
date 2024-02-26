@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
+using Random = UnityEngine.Random;
 
 [CreateAssetMenu(menuName = "Gameplay/Data Gen Block")]
 public class _DataGenBlockSO : ScriptableObject
@@ -11,6 +12,8 @@ public class _DataGenBlockSO : ScriptableObject
     [ShowInInspector] private List<_ShapeBlock> _listShapeBlock;
 
     public List<_ShapeBlock> ListShapeBlock => _listShapeBlock;
+
+    public _ShapeBlock ShapeBlockRandom => _listShapeBlock[Random.Range(0, _listShapeBlock.Count - 1)];
 
     [Button]
     public void Init()
@@ -39,7 +42,7 @@ public class _DataGenBlockSO : ScriptableObject
             {
                 for (var j = 0; j != shape.GetLength(0); j++)
                 {
-                    var index = 5 * i + j + 26 * ii;
+                    var index = 5 * i + j + 25 * ii;
                     try
                     {
                         var valueIn = int.Parse(str[index].Trim());

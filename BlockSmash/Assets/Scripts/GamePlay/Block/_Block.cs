@@ -5,21 +5,21 @@ namespace GamePlay
 {
     public class _Block
     {
-        private Transform _trf;
-        private Vector2 _posInputBlock;
+        private readonly Vector2 _posInputBlock;
 
-        public Transform Execute(_DataCreateBlock dataCreateBlock, _EntityBlockFacade prefab, Vector2 posInputBlock)
+        public _Block(_DataCreateBlock dataCreateBlock, _EntityBlockFacade prefab, Vector2 posInputBlock)
         {
-            _trf = new GameObject().transform;
+            Trf = new GameObject().transform;
             _posInputBlock = posInputBlock;
 #if UNITY_EDITOR
-            _trf.name = "Block";
+            Trf.name = "Block";
 #endif
             CreateEntities(dataCreateBlock, prefab);
-            return _trf;
         }
 
         private _EntityBlockFacade[,] _matrixEntitiesBlock;
+
+        public Transform Trf { get; }
 
         private void CreateEntities(_DataCreateBlock dataCreateBlock, _EntityBlockFacade prefab)
         {
@@ -29,7 +29,7 @@ namespace GamePlay
             {
                 for (var j = 0; j != 5; j++)
                 {
-                    var block = prefab.CreateInstance(_trf);
+                    var block = prefab.CreateInstance(Trf);
                     block.transform.localPosition = dataCreateBlock.PosLocalEntityBlock[j, i];
                     block.SetActive(false);
                     _matrixEntitiesBlock[j, i] = block;
@@ -40,7 +40,7 @@ namespace GamePlay
 
         public void GenBlock(_ShapeBlock shape)
         {
-            _trf.position = _posInputBlock;
+            Trf.position = _posInputBlock;
             var pos = Vector2.zero;
             int count = 0;
             for (var i = 0; i != _matrixEntitiesBlock.GetLength(1); i++)
@@ -52,6 +52,7 @@ namespace GamePlay
                     block.SetActive(isActive);
                     block.IsActive = isActive;
                     if (!isActive) continue;
+                    Debug.Log(j + "   "+ i);
                     pos += (Vector2) block.transform.localPosition;
                     count++;
                 }
@@ -70,7 +71,15 @@ namespace GamePlay
                 }
             }
 
-            _trf.localScale = Vector3.one * .68f;
+            Trf.localScale = Vector3.one * .68f;
+        }
+
+        public void ShowShadow(_BoardGame boardGame)
+        {
+            foreach (var entityBlock in _matrixEntitiesBlock)
+            {
+                boardGame.ShowShadow(entityBlock);
+            }
         }
     }
 }

@@ -19,7 +19,7 @@ public class _DataGenBlockSO : ScriptableObject
         foreach (var t in _text)
         {
             var shape = GenShape(t);
-            if(shape == null) continue;
+            if (shape == null) continue;
             _listShapeBlock.Add(shape);
         }
     }
@@ -28,24 +28,31 @@ public class _DataGenBlockSO : ScriptableObject
     {
         var shapeBlock = new _ShapeBlock();
         var str = text.text.Split(',');
-        if (str.Length != 26) return null;
-        var shape = new bool[5, 5];
-        for (var i = 0; i != shape.GetLength(1); i++)
+        var lengthShape = str.Length - 1;
+        if (lengthShape % 25 != 0) return null;
+        var count = lengthShape / 25;
+        shapeBlock.Shapes = new List<bool[,]>();
+        for (var ii = 0; ii != count; ii++)
         {
-            for (var j = 0; j != shape.GetLength(0); j++)
+            var shape = new bool[5, 5];
+            for (var i = 0; i != shape.GetLength(1); i++)
             {
-                var index = 5 * i + j;
-                try
+                for (var j = 0; j != shape.GetLength(0); j++)
                 {
-                    var valueIn = int.Parse(str[index]);
-                    shape[j, i] = valueIn == 1;
-                }
-                catch (Exception)
-                {
-                    Debug.LogError($"Can't convert string {str[index]} to int");
-                    return null;
+                    var index = 5 * i + j + 26 * ii;
+                    try
+                    {
+                        var valueIn = int.Parse(str[index].Trim());
+                        shape[j, i] = valueIn == 1;
+                    }
+                    catch (Exception)
+                    {
+                        Debug.LogError($"Can't convert string {str[index]} to int at {text.name}");
+                    }
                 }
             }
+
+            shapeBlock.Shapes.Add(shape);
         }
 
         var levelBlock = str[^1] switch
@@ -56,10 +63,7 @@ public class _DataGenBlockSO : ScriptableObject
             _ => _LevelBlockEnum.Easy
         };
 
-        shapeBlock.Shape = shape;
         shapeBlock.LevelBlock = levelBlock;
         return shapeBlock;
     }
-
-   
 }

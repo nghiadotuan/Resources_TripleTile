@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5be49926ab8841379e298d9b40b51410, type: 3}
+  m_Name: Game Play Init
+  m_EditorClassIdentifier: 
+  _initBoard:
+    _spriteBoard: {fileID: 21300000, guid: 6a28378b790878e4683e3f5eeafb8989, type: 3}
+    _sizeBoard: {x: 8, y: 8}
+    _posBoard: {x: 0, y: 1}
+    _posFirstBlock: {x: -4.35, y: -3.25}
+  _initInput:
+    _sizeColliderInput: {x: 2.2, y: 2.2}
+    _posInput:
+    - {x: -3.5, y: -7}
+    - {x: 0, y: -7}
+    - {x: 3.5, y: -7}
+  _distanceEntityBlock: 1.24
+  _distanceCheckPutBlock: 0.5
+  _prefabEntityBlock: {fileID: 2642376743120785614, guid: 6c040a4dea10cc54a9b7d27bd848a24d, type: 3}

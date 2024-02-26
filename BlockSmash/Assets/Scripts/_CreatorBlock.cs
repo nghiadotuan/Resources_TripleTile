@@ -14,6 +14,8 @@ public class _CreatorBlock : MonoBehaviour
     {
         _dataCreateBlock.Init();
         _data.Init();
+
+        // tai sao la 5: vi block dai nhat  co 5 entity block.
         _block = new GameObject[5, 5];
         for (var i = 0; i != 5; i++)
         {
@@ -22,6 +24,7 @@ public class _CreatorBlock : MonoBehaviour
                 var block = Instantiate(_entityBlock, transform);
                 block.transform.localPosition = _dataCreateBlock.PosLocalEntityBlock[j, i];
                 _block[j, i] = block;
+                block.GetComponent<_EntityBlock>().SetId((sbyte) (j - 2), (sbyte) (i - 2));
             }
         }
     }
@@ -36,20 +39,22 @@ public class _CreatorBlock : MonoBehaviour
 
         var pos = Vector2.zero;
         int count = 0;
-        var shape = _data.ListShapeBlock[index].Shape;
-        for (var i = 0; i != _block.GetLength(1); i++)
-        {
-            for (var j = 0; j != _block.GetLength(0); j++)
-            {
-                _block[j, i].transform.localPosition = _dataCreateBlock.PosLocalEntityBlock[j, i];
-                _block[j, i].SetActive(shape[j, i]);
-                if (!shape[j, i]) continue;
-                pos += (Vector2) _block[j, i].transform.localPosition;
-                count++;
-            }
-        }
+        var shape = _data.ListShapeBlock[index].Shapes;
+        // for (var i = 0; i != _block.GetLength(1); i++)
+        // {
+        //     for (var j = 0; j != _block.GetLength(0); j++)
+        //     {
+        //         var block = _block[j, i];
+        //         block.transform.localPosition = _dataCreateBlock.PosLocalEntityBlock[j, i];
+        //         block.SetActive(shape[j, i]);
+        //         block.GetComponent<_EntityBlock>().IsActive = shape[j, i];
+        //         if (!shape[j, i]) continue;
+        //         pos += (Vector2) block.transform.localPosition;
+        //         count++;
+        //     }
+        // }
 
-        pos = pos / count;
+        pos /= count;
 
         for (var i = 0; i != _block.GetLength(1); i++)
         {
@@ -70,7 +75,7 @@ public class _CreatorBlock : MonoBehaviour
         foreach (var block in _block)
         {
             if (!block.activeInHierarchy) continue;
-            var (x,y) = _Board.Instance.ShowShadowBlock(block.transform.position);
+            var (x, y) = _Board.Instance.ShowShadowBlock(block.transform.position);
             block.GetComponent<_EntityBlock>().SetIdShadow(x, y);
         }
 
@@ -78,11 +83,8 @@ public class _CreatorBlock : MonoBehaviour
         {
             foreach (var block in _block)
             {
-                if(!block.activeInHierarchy) continue;
+                if (!block.activeInHierarchy) continue;
                 block.GetComponent<_EntityBlock>().ResetId();
-                // -4.35, -5.25        -.617668
-                // -3.11, -5.25
-                // -3.732332
             }
         }
     }
@@ -100,11 +102,24 @@ public class _CreatorBlock : MonoBehaviour
     {
         foreach (var block in _block)
         {
-            if(!block.activeInHierarchy) continue;
-            if(block.GetComponent<_EntityBlock>().IsShowShadow)  continue;
+            if (!block.activeInHierarchy) continue;
+            if (block.GetComponent<_EntityBlock>().IsShowShadow) continue;
             return false;
         }
 
         return true;
+    }
+
+    public void PutBlock()
+    {
+        foreach (var block in _block)
+        {
+            if (!block.activeInHierarchy) continue;
+            var entity = block.GetComponent<_EntityBlock>();
+            _Board.Instance.ShowBlock(entity.X, entity.Y);
+
+        }
+
+        gameObject.SetActive(false);
     }
 }

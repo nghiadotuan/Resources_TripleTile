@@ -1,0 +1,28 @@
+﻿using Sirenix.OdinInspector;
+using UnityEngine;
+
+namespace GamePlay
+{
+    [System.Serializable]
+    public class _DataCreateBlock
+    {
+        [SerializeField] private float _distance = 1.2f;
+
+        [ShowInInspector] public Vector2[,] PosLocalEntityBlock { get; private set; }
+
+        public void Init()
+        {
+            PosLocalEntityBlock = new Vector2[5, 5];
+            const int centerIndex = 2;
+            for (var i = 0; i != PosLocalEntityBlock.GetLength(1); i++)
+            {
+                var y = (i - centerIndex) * _distance;
+                for (var j = 0; j != PosLocalEntityBlock.GetLength(0); j++)
+                {
+                    var x = (j - centerIndex) * _distance;
+                    PosLocalEntityBlock[i, j] = new Vector2(x, y);
+                }
+            }
+        }
+    }
+}

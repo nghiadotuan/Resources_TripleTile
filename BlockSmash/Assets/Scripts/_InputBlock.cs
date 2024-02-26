@@ -32,9 +32,28 @@ public class _InputBlock : MonoBehaviour
         if (Input.GetMouseButtonUp(0))
         {
             _isPick = false;
-            _block.DOScale(.68f, .1f).SetEase(Ease.Linear).From(1);
-            _block.DOMove(transform.position, .05f).SetEase(Ease.Linear);
-            _block.GetComponent<_CreatorBlock>().ResetWhenUnPick();
+            if (_block.GetComponent<_CreatorBlock>().IsEntitiesBlockAllShadow())
+            {
+                PutBlock();
+            }
+            else
+            {
+                DoBlockToPosStart();
+            }
         }
+    }
+
+    // when block can't put into frame
+    private void DoBlockToPosStart()
+    {
+        _block.DOScale(.68f, .1f).SetEase(Ease.Linear).From(1);
+        _block.DOMove(transform.position, .05f).SetEase(Ease.Linear);
+        _block.GetComponent<_CreatorBlock>().ResetWhenUnPick();
+    }
+
+    private void PutBlock()
+    {
+        _block.GetComponent<_CreatorBlock>().PutBlock();
+        _block.transform.position = transform.position;
     }
 }

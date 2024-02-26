@@ -1,3 +1,4 @@
+using DG.Tweening;
 using Sirenix.OdinInspector;
 using Unity.Mathematics;
 using UnityEngine;
@@ -43,6 +44,7 @@ public class _Board : MonoBehaviour
         color.a = .68f;
         block.GetComponent<SpriteRenderer>().color = color;
         block.GetComponent<SpriteRenderer>().sortingOrder = 1;
+        block.GetComponent<_EntityBlock>().SetId((sbyte) x, (sbyte) y);
         _listBlocks[x, y] = block;
     }
 
@@ -60,6 +62,7 @@ public class _Board : MonoBehaviour
             for (var j = 0; j != _sizeFrame.x; j++)
             {
                 var shadow = _listBlocks[j, i];
+                if (shadow.GetComponent<_EntityBlock>().IsActive) continue;
                 if (!IsShowShadow(pos, shadow.transform.position)) continue;
                 shadow.SetActive(true);
                 return ((sbyte) j, (sbyte) i);
@@ -71,6 +74,20 @@ public class _Board : MonoBehaviour
 
     public GameObject GetShadow(byte x, byte y)
     {
-        return _listBlocks[x,y];
+        return _listBlocks[x, y];
+    }
+
+    public void ShowBlock(sbyte x, sbyte y)
+    {
+        if (x < 0 || y < 0)
+        {
+            Debug.LogError("can't get block");
+            return;
+        }
+
+        var block = _listBlocks[x, y];
+        block.GetComponent<SpriteRenderer>().DOFade(1, 0);
+        block.GetComponent<_EntityBlock>().IsActive = true;
+        block.SetActive(true);
     }
 }

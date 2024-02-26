@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Diagnostics;
 using Sirenix.OdinInspector;
 using Unity.Mathematics;
 using UnityEngine;
@@ -13,7 +11,7 @@ public class _Board : MonoBehaviour
     [SerializeField] private float _distanceY;
     [SerializeField] private GameObject _block;
 
-    private List<GameObject> _listBlocks;
+    private GameObject[,] _listBlocks;
     [SerializeField] private float _DISTANCE = .5f;
 
     public static _Board Instance;
@@ -26,7 +24,7 @@ public class _Board : MonoBehaviour
     [Button]
     private void CreateBlocks()
     {
-        _listBlocks = new List<GameObject>();
+        _listBlocks = new GameObject[_sizeFrame.x, _sizeFrame.y];
         for (var i = 0; i != _sizeFrame.y; i++)
         {
             for (var j = 0; j != _sizeFrame.x; j++)
@@ -46,36 +44,34 @@ public class _Board : MonoBehaviour
         color.a = .68f;
         block.GetComponent<SpriteRenderer>().color = color;
         block.GetComponent<SpriteRenderer>().sortingOrder = 1;
-        _listBlocks.Add(block);
+        _listBlocks[x, y] = block;
     }
 
     private bool IsShowShadow(Vector3 pos1, Vector3 pos2)
     {
-        Debug.Log(Mathf.Abs(pos1.x - pos2.x) + "   "+ Mathf.Abs(pos1.y - pos2.y)  + "     "+ pos1 + "    "+ pos2);
         if (Mathf.Abs(pos1.x - pos2.x) > _DISTANCE) return false;
         if (Mathf.Abs(pos1.y - pos2.y) > _DISTANCE) return false;
         return true;
     }
 
-    public (byte, byte) ShowShadowBlock(Vector3 pos)
+    public (sbyte, sbyte) ShowShadowBlock(Vector3 pos)
     {
         for (var i = 0; i != _sizeFrame.y; i++)
         {
             for (var j = 0; j != _sizeFrame.x; j++)
             {
-                Debug.Log($"{j}x{i}");
-                var shadow = _listBlocks[i * (_sizeFrame.y - 1) + j];
+                var shadow = _listBlocks[j, i];
                 if (!IsShowShadow(pos, shadow.transform.position)) continue;
                 shadow.SetActive(true);
-                return ((byte) j, (byte) i);
+                return ((sbyte) j, (sbyte) i);
             }
         }
 
-        return (0, 0);
+        return (-1, -1);
     }
 
     public GameObject GetShadow(byte x, byte y)
     {
-        return _listBlocks[y * (_sizeFrame.y - 1) + x];
+        return _listBlocks[x,y];
     }
 }

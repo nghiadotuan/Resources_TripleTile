@@ -5,13 +5,13 @@ public class _EntityBlock : MonoBehaviour
     private sbyte _x = -1;
     private sbyte _y = -1;
 
-    public void SetIdShadow(byte x, byte y)
+    public void SetIdShadow(sbyte x, sbyte y)
     {
         if (x == _x && y == _y) return;
         if (_x >= 0 && _y >= 0)
             _Board.Instance.GetShadow((byte) _x, (byte) _y).SetActive(false);
-        _x = (sbyte) x;
-        _y = (sbyte) y;
+        _x = x;
+        _y = y;
     }
 
     public void ResetId()

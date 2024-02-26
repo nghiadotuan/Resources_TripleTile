@@ -73,6 +73,18 @@ public class _CreatorBlock : MonoBehaviour
             var (x,y) = _Board.Instance.ShowShadowBlock(block.transform.position);
             block.GetComponent<_EntityBlock>().SetIdShadow(x, y);
         }
+
+        if (!IsEntitiesBlockAllShadow())
+        {
+            foreach (var block in _block)
+            {
+                if(!block.activeInHierarchy) continue;
+                block.GetComponent<_EntityBlock>().ResetId();
+                // -4.35, -5.25        -.617668
+                // -3.11, -5.25
+                // -3.732332
+            }
+        }
     }
 
     public void ResetWhenUnPick()
@@ -82,5 +94,17 @@ public class _CreatorBlock : MonoBehaviour
             if (block.activeInHierarchy)
                 block.GetComponent<_EntityBlock>().ResetId();
         }
+    }
+
+    public bool IsEntitiesBlockAllShadow()
+    {
+        foreach (var block in _block)
+        {
+            if(!block.activeInHierarchy) continue;
+            if(block.GetComponent<_EntityBlock>().IsShowShadow)  continue;
+            return false;
+        }
+
+        return true;
     }
 }

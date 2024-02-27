@@ -10,19 +10,22 @@ namespace GamePlay
         private readonly Vector2 _position;
         private readonly _Block _block;
         private readonly _BoardGame _boardGame;
+        private readonly _DataInputGame _dataInputGame;
 
         public _InputLogic
         (
             Camera camera,
             Vector2 position,
             _Block block,
-            _BoardGame boardGame
+            _BoardGame boardGame,
+            _DataInputGame dataInputGame
         )
         {
             _cam = camera;
             _position = position;
             _block = block;
             _boardGame = boardGame;
+            _dataInputGame = dataInputGame;
         }
 
         [ShowInInspector] private bool _isPick;
@@ -31,6 +34,7 @@ namespace GamePlay
 
         public void OnMouseDown()
         {
+            _dataInputGame.ListXYShadow.Clear();
             _block.Trf.DOScale(1, .15f).SetEase(Ease.OutBack).From(0.68f);
             _isPick = true;
         }

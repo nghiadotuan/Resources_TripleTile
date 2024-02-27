@@ -15,14 +15,15 @@ namespace GamePlay
             Vector2 size,
             _DataCreateBlock dataCreateBlock,
             _EntityBlockFacade prefab,
-            _BoardGame boardGame
+            _BoardGame boardGame,
+            _DataInputGame dataInputGame
         )
         {
             var box = gameObject.AddComponent<BoxCollider2D>();
             box.size = size;
             transform.position = pos;
-            _block = new _Block(dataCreateBlock, prefab, pos);
-            _inputLogic = new _InputLogic(cam, pos, _block, boardGame);
+            _block = new _Block(dataCreateBlock, prefab, pos, dataInputGame);
+            _inputLogic = new _InputLogic(cam, pos, _block, boardGame, dataInputGame);
         }
 
         public bool IsPut => _inputLogic.IsPut;

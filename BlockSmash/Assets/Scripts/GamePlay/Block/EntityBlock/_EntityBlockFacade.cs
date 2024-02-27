@@ -1,4 +1,7 @@
-﻿using Sirenix.OdinInspector;
+﻿using System;
+using Cysharp.Threading.Tasks;
+using DG.Tweening;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace GamePlay
@@ -7,7 +10,7 @@ namespace GamePlay
     {
         [ShowInInspector] public sbyte X { get; set; }
         [ShowInInspector] public sbyte Y { get; set; }
-        [ShowInInspector] public bool IsActive { get;  private set; }
+        [ShowInInspector] public bool IsActive { get; private set; }
 
         [ShowInInspector] public sbyte XEntity { get; set; }
         [ShowInInspector] public sbyte YEntity { get; set; }
@@ -32,5 +35,23 @@ namespace GamePlay
             IsActive = isActive;
             gameObject.SetActive(isActive);
         }
+
+        public void Destroy()
+        {
+            IsActive = false;
+            transform.DOScale(0, .15f).SetEase(Ease.Flash).OnComplete(() =>
+            {
+                SetActive(false);
+                transform.localScale = Vector3.one;
+            });
+        }
+
+        // private void WaitDestroy()
+        // {
+        //     SetActive(false);
+        //     transform.DOScale(0, .15f).SetEase(Ease.Flash);
+        //     await UniTask.Delay(TimeSpan.FromSeconds(0.15f), cancellationToken: this.GetCancellationTokenOnDestroy());
+        //     transform.localScale = Vector3.one;
+        // }
     }
 }

@@ -13,7 +13,8 @@ namespace GamePlay
             _spriteRenderer.sortingOrder = 1;
         }
 
-        public Sprite Sprite => _spriteRenderer.sprite;
+        public Sprite RootSprite { get; private set; }
+        public Sprite SpriteBlock => _spriteRenderer.sprite;
 
         public void SetShadow()
         {
@@ -30,9 +31,20 @@ namespace GamePlay
             _spriteRenderer.sortingOrder = value;
         }
 
-        public void SetSprite(Sprite sprite)
+        public void SetSpriteBlock(Sprite sprite)
+        {
+            RootSprite = sprite;
+            _spriteRenderer.sprite = sprite;
+        }
+
+        public void SetHighLightSprite(Sprite sprite)
         {
             _spriteRenderer.sprite = sprite;
+        }
+
+        public void SetRootSprite()
+        {
+            _spriteRenderer.sprite = RootSprite;
         }
     }
 }

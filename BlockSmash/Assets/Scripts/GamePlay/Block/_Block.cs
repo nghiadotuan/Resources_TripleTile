@@ -9,9 +9,15 @@ namespace GamePlay
     {
         private readonly Vector2 _posInputBlock;
         private readonly _DataCreateBlock _dataCreateBlock;
-        private readonly List<_DataXYShadow> _listXYShadow;
+        private readonly _DataInputGame _dataInputGame;
 
-        public _Block(_DataCreateBlock dataCreateBlock, _EntityBlockFacade prefab, Vector2 posInputBlock)
+        public _Block
+        (
+            _DataCreateBlock dataCreateBlock,
+            _EntityBlockFacade prefab,
+            Vector2 posInputBlock,
+            _DataInputGame dataInputGame
+        )
         {
             Trf = new GameObject().transform;
             _posInputBlock = posInputBlock;
@@ -20,7 +26,7 @@ namespace GamePlay
 #endif
             CreateEntities(dataCreateBlock, prefab);
             _dataCreateBlock = dataCreateBlock;
-            _listXYShadow = new List<_DataXYShadow>();
+            _dataInputGame = dataInputGame;
         }
 
         private _EntityBlockFacade[,] _matrixEntitiesBlock;
@@ -85,71 +91,101 @@ namespace GamePlay
             Trf.DOScale(0.68f, .5f).From(0).SetEase(Ease.OutBack);
         }
 
-        public bool IsExistShadowBlock()
-        {
-            foreach (var block in _matrixEntitiesBlock)
-            {
-                if (!block.IsActive) continue;
-                return false;
-            }
-
-            return true;
-        }
-
         public void ShowShadow(_BoardGame boardGame)
         {
-            foreach (var data in _listXYShadow)
+            foreach (var data in _dataInputGame.ListXYShadow)
             {
                 boardGame.GetEntityBlock(data.XShadow, data.YShadow).SetActive(false);
             }
 
+            CheckFullRowAndColumnAndHighLight(boardGame);
             IsPut = false;
-            _listXYShadow.Clear();
+            _dataInputGame.ListXYShadow.Clear();
             foreach (var entityBlock in _matrixEntitiesBlock)
             {
                 if (!entityBlock.IsActive) continue;
                 var (x, y) = boardGame.GetIDShowShadow(entityBlock);
                 if (x < 0) continue;
                 var data = new _DataXYShadow(x, y);
-                _listXYShadow.Add(data);
+                _dataInputGame.ListXYShadow.Add(data);
             }
 
-            // if (!IsExistShadowBlock())
-            // {
-            //     foreach (var entity in _matrixEntitiesBlock)
-            //     {
-            //         if (!entity.IsActive) continue;
-            //         boardGame.GetEntityBlock(entity.XShadow, entity.YShadow)?.SetActive(false);
-            //         entity.SetXYShadow(-1, -1);
-            //     }
-            // }
-
-            if (_listXYShadow.Count < _numEntityBlock)
+            if (_dataInputGame.ListXYShadow.Count < _numEntityBlock)
             {
                 IsPut = false;
                 return;
             }
 
             IsPut = true;
-            foreach (var data in _listXYShadow)
+            foreach (var data in _dataInputGame.ListXYShadow)
             {
                 var shadow = boardGame.GetEntityBlock(data.XShadow, data.YShadow);
                 shadow.SetActive(true);
-                shadow.SpriteRenderer.SetSprite(_sprite);
+                shadow.SpriteRenderer.SetSpriteBlock(_sprite);
+            }
+
+            CheckFullRowAndColumnAndHighLight(boardGame);
+        }
+
+        private void CheckFullRowAndColumnAndHighLight(_BoardGame boardGame)
+        {
+            _dataInputGame.SetListCheckFullRowAndColumn();
+            foreach (var x in _dataInputGame.ListXCheckFullRow)
+            {
+                if (boardGame.IsFullColumn(x))
+                {
+                    boardGame.HighlightColumn(x, _sprite);
+                }
+                else
+                {
+                    boardGame.SetRootSpriteColumn(x);
+                }
+            }
+
+            foreach (var y in _dataInputGame.ListYCheckFullColumn)
+            {
+                if (boardGame.IsFullRow(y))
+                {
+                    boardGame.HighlightRow(y, _sprite);
+                }
+                else
+                {
+                    boardGame.SetRootSpriteRow(y);
+                }
+            }
+        }
+
+        private void CHeckDestroyRowAndColumn(_BoardGame boardGame)
+        {
+            foreach (var x in _dataInputGame.ListXCheckFullRow)
+            {
+                if (boardGame.IsFullColumn(x))
+                {
+                    boardGame.DestroyColumn(x);
+                }
+            }
+
+            foreach (var y in _dataInputGame.ListYCheckFullColumn)
+            {
+                if (boardGame.IsFullRow(y))
+                {
+                    boardGame.DestroyRow(y);
+                }
             }
         }
 
         public void PutBlock(_BoardGame boardGame)
         {
-            foreach (var data in _listXYShadow)
+            foreach (var data in _dataInputGame.ListXYShadow)
             {
                 var shadow = boardGame.GetEntityBlock(data.XShadow, data.YShadow);
                 shadow.SetActive(true);
-                shadow.SpriteRenderer.SetSprite(_sprite);
+                shadow.SpriteRenderer.SetSpriteBlock(_sprite);
                 shadow.SpriteRenderer.SetBlock();
             }
 
-            _listXYShadow.Clear();
+            CHeckDestroyRowAndColumn(boardGame);
+            _dataInputGame.ListXYShadow.Clear();
         }
 
         public void SetSpriteBlock(Sprite sprite)
@@ -158,7 +194,7 @@ namespace GamePlay
             foreach (var entity in _matrixEntitiesBlock)
             {
                 if (!entity.IsActive) continue;
-                entity.SpriteRenderer.SetSprite(sprite);
+                entity.SpriteRenderer.SetSpriteBlock(sprite);
             }
         }
     }

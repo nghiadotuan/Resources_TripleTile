@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Threading;
+using Sirenix.OdinInspector;
+using UnityEngine;
 
 namespace GamePlay
 {
@@ -7,11 +10,15 @@ namespace GamePlay
         [SerializeField] private Camera _mainCamera;
         [SerializeField] private _GamePlayInit _gamePlayInit;
 
-        private _BoardGame _boardGame;
-        private _InputGame _inputGame;
+        [ShowInInspector] private _BoardGame _boardGame;
+        [ShowInInspector] private _InputGame _inputGame;
+
+        private CancellationTokenSource _cts;
 
         private void Awake()
         {
+            _cts = new CancellationTokenSource();
+            Input.multiTouchEnabled = false;
             _gamePlayInit.Init();
             CreateBoardGame();
             CreateInputsGame();
@@ -20,7 +27,7 @@ namespace GamePlay
         // board game: chua cac entity block
         private void CreateBoardGame()
         {
-            _boardGame = new _BoardGame(_gamePlayInit);
+            _boardGame = new _BoardGame(_gamePlayInit, _cts);
         }
 
         // logic bat su kien user cham vao block
@@ -32,7 +39,13 @@ namespace GamePlay
         private void Update()
         {
             var deltaTime = Time.deltaTime;
-           _inputGame.OnUpdate(deltaTime);
+            _inputGame.OnUpdate(deltaTime);
+        }
+
+        private void OnDestroy()
+        {
+            _cts?.Cancel();
+            _cts?.Dispose();
         }
     }
 }

@@ -1,4 +1,7 @@
-﻿using Extensions.GameObjects;
+﻿using System;
+using System.Threading;
+using Cysharp.Threading.Tasks;
+using Extensions.GameObjects;
 using UnityEngine;
 
 namespace GamePlay
@@ -10,14 +13,16 @@ namespace GamePlay
         private readonly float _distanceEntityBlock;
         private readonly _EntityBlockFacade _prefabEntityBlock;
         private readonly float _distanceCheckShadow;
+        private readonly CancellationTokenSource _cts;
 
-        public _BoardGame(_GamePlayInit init)
+        public _BoardGame(_GamePlayInit init, CancellationTokenSource cts)
         {
             _sizeBoard = init.InitBoard.SizeBoard;
             _posFirstBlock = init.InitBoard.PosFirstBlock;
             _distanceEntityBlock = init.DistanceEntityBlock;
             _prefabEntityBlock = init.PrefabEntityBlock;
             _distanceCheckShadow = init.DistanceCheckPutBlock;
+            _cts = cts;
             CreateBoard(init);
         }
 
@@ -74,17 +79,6 @@ namespace GamePlay
 
         public (sbyte, sbyte) GetIDShowShadow(_EntityBlockFacade entity)
         {
-            // for (var i = 0; i != _sizeBoard.y; i++)
-            // {
-            //     for (var j = 0; j != _sizeBoard.x; j++)
-            //     {
-            //         var shadow = _matrixEntityBlocks[j, i];
-            //         if (shadow.IsActive) continue;
-            //         if (!IsShadow(entity.Pos, shadow.Pos)) continue;
-            //         return ((sbyte) j, (sbyte) i);
-            //     }
-            // }
-
             foreach (var shadow in _matrixEntityBlocks)
             {
                 if (shadow.IsActive) continue;
@@ -106,6 +100,76 @@ namespace GamePlay
             var entity = GetEntityBlock(x, y);
             entity.SpriteRenderer.SetBlock();
             entity.SetActive(true);
+        }
+
+        public bool IsFullRow(int y)
+        {
+            for (var i = 0; i != _sizeBoard.x; i++)
+            {
+                if (!_matrixEntityBlocks[i, y].IsActive) return false;
+            }
+
+            return true;
+        }
+
+        public bool IsFullColumn(int x)
+        {
+            for (var i = 0; i != _sizeBoard.y; i++)
+            {
+                if (!_matrixEntityBlocks[x, i].IsActive) return false;
+            }
+
+            return true;
+        }
+
+        public void HighlightRow(int y, Sprite sprite)
+        {
+            for (var i = 0; i != _sizeBoard.x; i++)
+            {
+                _matrixEntityBlocks[i, y].SpriteRenderer.SetHighLightSprite(sprite);
+            }
+        }
+
+        public void SetRootSpriteRow(int y)
+        {
+            for (var i = 0; i != _sizeBoard.x; i++)
+            {
+                _matrixEntityBlocks[i, y].SpriteRenderer.SetRootSprite();
+            }
+        }
+
+        public async void DestroyRow(int y)
+        {
+            for (var i = 0; i != _sizeBoard.x; i++)
+            {
+                await UniTask.Delay(TimeSpan.FromSeconds(0.01f), cancellationToken: _cts.Token);
+                _matrixEntityBlocks[i, y].Destroy();
+            }
+        }
+
+        public void HighlightColumn(int x, Sprite sprite)
+        {
+            for (var i = 0; i != _sizeBoard.y; i++)
+            {
+                _matrixEntityBlocks[x, i].SpriteRenderer.SetHighLightSprite(sprite);
+            }
+        }
+
+        public void SetRootSpriteColumn(int x)
+        {
+            for (var i = 0; i != _sizeBoard.y; i++)
+            {
+                _matrixEntityBlocks[x, i].SpriteRenderer.SetRootSprite();
+            }
+        }
+
+        public async void DestroyColumn(int x)
+        {
+            for (var i = 0; i != _sizeBoard.y; i++)
+            {
+                await UniTask.Delay(TimeSpan.FromSeconds(0.01f), cancellationToken: _cts.Token);
+                _matrixEntityBlocks[x, i].Destroy();
+            }
         }
     }
 }

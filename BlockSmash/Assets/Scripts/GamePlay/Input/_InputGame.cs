@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Sirenix.OdinInspector;
+using UnityEngine;
 
 namespace GamePlay
 {
@@ -6,6 +7,7 @@ namespace GamePlay
     {
         private readonly _DataGenBlockSO _dataGenBlock;
         private readonly _DataSpriteBlock _dataSpriteBlock;
+        [ShowInInspector] private readonly _DataInputGame _dataInputGame;
 
         public _InputGame
         (
@@ -14,6 +16,7 @@ namespace GamePlay
             _BoardGame boardGame
         )
         {
+            _dataInputGame = new _DataInputGame();
             CreateInputs(gamePlayInit, mainCamera, boardGame);
             _dataGenBlock = gamePlayInit.DataCreateBlock.DataGenBlock;
             _dataSpriteBlock = gamePlayInit.DataSpriteBlock;
@@ -38,7 +41,14 @@ namespace GamePlay
 #if UNITY_EDITOR
                 _inputBlocks[i].name = $"InputBlock_{i}";
 #endif
-                _inputBlocks[i].Init(mainCamera, gamePlayInit.InitInput.PosInput[i], size, gamePlayInit.DataCreateBlock, gamePlayInit.PrefabEntityBlock, boardGame);
+                _inputBlocks[i].Init
+                (
+                    mainCamera,
+                    gamePlayInit.InitInput.PosInput[i],
+                    size, gamePlayInit.DataCreateBlock,
+                    gamePlayInit.PrefabEntityBlock, boardGame,
+                    _dataInputGame
+                );
             }
         }
 
@@ -62,7 +72,7 @@ namespace GamePlay
         {
             foreach (var input in _inputBlocks)
             {
-                if(!input.IsPut) return;
+                if (!input.IsPut) return;
             }
 
             GenBlocks();

@@ -1,4 +1,6 @@
-﻿using Extensions.GameObjects;
+﻿using System.Collections.Generic;
+using DG.Tweening;
+using Extensions.GameObjects;
 using UnityEngine;
 
 namespace GamePlay
@@ -6,6 +8,8 @@ namespace GamePlay
     public class _Block
     {
         private readonly Vector2 _posInputBlock;
+        private readonly _DataCreateBlock _dataCreateBlock;
+        private readonly List<_DataXYShadow> _listXYShadow;
 
         public _Block(_DataCreateBlock dataCreateBlock, _EntityBlockFacade prefab, Vector2 posInputBlock)
         {
@@ -15,11 +19,17 @@ namespace GamePlay
             Trf.name = "Block";
 #endif
             CreateEntities(dataCreateBlock, prefab);
+            _dataCreateBlock = dataCreateBlock;
+            _listXYShadow = new List<_DataXYShadow>();
         }
 
         private _EntityBlockFacade[,] _matrixEntitiesBlock;
+        private int _numEntityBlock;
+        private Sprite _sprite;
 
         public Transform Trf { get; }
+        public byte IndexSprite { get; set; }
+        public bool IsPut { get; private set; }
 
         private void CreateEntities(_DataCreateBlock dataCreateBlock, _EntityBlockFacade prefab)
         {
@@ -34,31 +44,32 @@ namespace GamePlay
                     block.SetActive(false);
                     _matrixEntitiesBlock[j, i] = block;
                     block.SetXY((sbyte) (j - 2), (sbyte) (i - 2));
+                    block.SpriteRenderer.SetSortingOrder(2);
                 }
             }
         }
 
         public void GenBlock(_ShapeBlock shape)
         {
+            _numEntityBlock = 0;
             Trf.position = _posInputBlock;
             var pos = Vector2.zero;
-            int count = 0;
+            var shapeBlock = shape.Shape;
             for (var i = 0; i != _matrixEntitiesBlock.GetLength(1); i++)
             {
                 for (var j = 0; j != _matrixEntitiesBlock.GetLength(0); j++)
                 {
                     var block = _matrixEntitiesBlock[j, i];
-                    var isActive = shape.Shape[j, i];
+                    var isActive = shapeBlock[j, i];
                     block.SetActive(isActive);
-                    block.IsActive = isActive;
                     if (!isActive) continue;
-                    Debug.Log(j + "   "+ i);
-                    pos += (Vector2) block.transform.localPosition;
-                    count++;
+                    block.transform.localPosition = _dataCreateBlock.PosLocalEntityBlock[j, i];
+                    pos += _dataCreateBlock.PosLocalEntityBlock[j, i];
+                    _numEntityBlock++;
                 }
             }
 
-            pos /= count;
+            pos /= _numEntityBlock;
 
             for (var i = 0; i != _matrixEntitiesBlock.GetLength(1); i++)
             {
@@ -71,14 +82,83 @@ namespace GamePlay
                 }
             }
 
-            Trf.localScale = Vector3.one * .68f;
+            Trf.DOScale(0.68f, .5f).From(0).SetEase(Ease.OutBack);
+        }
+
+        public bool IsExistShadowBlock()
+        {
+            foreach (var block in _matrixEntitiesBlock)
+            {
+                if (!block.IsActive) continue;
+                return false;
+            }
+
+            return true;
         }
 
         public void ShowShadow(_BoardGame boardGame)
         {
+            foreach (var data in _listXYShadow)
+            {
+                boardGame.GetEntityBlock(data.XShadow, data.YShadow).SetActive(false);
+            }
+
+            IsPut = false;
+            _listXYShadow.Clear();
             foreach (var entityBlock in _matrixEntitiesBlock)
             {
-                boardGame.ShowShadow(entityBlock);
+                if (!entityBlock.IsActive) continue;
+                var (x, y) = boardGame.GetIDShowShadow(entityBlock);
+                if (x < 0) continue;
+                var data = new _DataXYShadow(x, y);
+                _listXYShadow.Add(data);
+            }
+
+            // if (!IsExistShadowBlock())
+            // {
+            //     foreach (var entity in _matrixEntitiesBlock)
+            //     {
+            //         if (!entity.IsActive) continue;
+            //         boardGame.GetEntityBlock(entity.XShadow, entity.YShadow)?.SetActive(false);
+            //         entity.SetXYShadow(-1, -1);
+            //     }
+            // }
+
+            if (_listXYShadow.Count < _numEntityBlock)
+            {
+                IsPut = false;
+                return;
+            }
+
+            IsPut = true;
+            foreach (var data in _listXYShadow)
+            {
+                var shadow = boardGame.GetEntityBlock(data.XShadow, data.YShadow);
+                shadow.SetActive(true);
+                shadow.SpriteRenderer.SetSprite(_sprite);
+            }
+        }
+
+        public void PutBlock(_BoardGame boardGame)
+        {
+            foreach (var data in _listXYShadow)
+            {
+                var shadow = boardGame.GetEntityBlock(data.XShadow, data.YShadow);
+                shadow.SetActive(true);
+                shadow.SpriteRenderer.SetSprite(_sprite);
+                shadow.SpriteRenderer.SetBlock();
+            }
+
+            _listXYShadow.Clear();
+        }
+
+        public void SetSpriteBlock(Sprite sprite)
+        {
+            _sprite = sprite;
+            foreach (var entity in _matrixEntitiesBlock)
+            {
+                if (!entity.IsActive) continue;
+                entity.SpriteRenderer.SetSprite(sprite);
             }
         }
     }

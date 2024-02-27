@@ -5,7 +5,7 @@ namespace GamePlay
 {
     public class _InputFacade : MonoBehaviour, _IUpdateAble
     {
-        private _InputBlock _inputBlock;
+        [ShowInInspector] private _InputLogic _inputLogic;
         private _Block _block;
 
         public void Init
@@ -22,17 +22,23 @@ namespace GamePlay
             box.size = size;
             transform.position = pos;
             _block = new _Block(dataCreateBlock, prefab, pos);
-            _inputBlock = new _InputBlock(cam, pos, _block, boardGame);
+            _inputLogic = new _InputLogic(cam, pos, _block, boardGame);
         }
+
+        public bool IsPut => _inputLogic.IsPut;
 
         private void OnMouseDown()
         {
-            _inputBlock.OnMouseDown();
+            if (_inputLogic.IsPut) return;
+            _inputLogic.OnMouseDown();
         }
 
-        public void GenBlock(_ShapeBlock shape)
+        public void GenBlock(_ShapeBlock shape, Sprite sprite)
         {
+            _inputLogic.IsPut = false;
             _block.GenBlock(shape);
+            _block.SetSpriteBlock(sprite);
+            _block.Trf.gameObject.SetActive(true);
         }
 
 #if UNITY_EDITOR
@@ -53,7 +59,7 @@ namespace GamePlay
 #endif
         public void OnUpdate(float deltaTime)
         {
-            _inputBlock.OnUpdate(deltaTime);
+            _inputLogic.OnUpdate(deltaTime);
         }
     }
 }

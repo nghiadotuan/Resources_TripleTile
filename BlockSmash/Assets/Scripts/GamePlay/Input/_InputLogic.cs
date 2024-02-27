@@ -1,16 +1,17 @@
 ﻿using DG.Tweening;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace GamePlay
 {
-    public class _InputBlock : _IUpdateAble
+    public class _InputLogic : _IUpdateAble
     {
         private readonly Camera _cam;
         private readonly Vector2 _position;
         private readonly _Block _block;
         private readonly _BoardGame _boardGame;
 
-        public _InputBlock
+        public _InputLogic
         (
             Camera camera,
             Vector2 position,
@@ -24,7 +25,9 @@ namespace GamePlay
             _boardGame = boardGame;
         }
 
-        private bool _isPick;
+        [ShowInInspector] private bool _isPick;
+
+        public bool IsPut { get; set; }
 
         public void OnMouseDown()
         {
@@ -47,33 +50,29 @@ namespace GamePlay
             if (Input.GetMouseButtonUp(0))
             {
                 _isPick = false;
-                // if (_block.GetComponent<_CreatorBlock>().IsEntitiesBlockAllShadow())
-                // {
-                //     PutBlock();
-                // }
-                // else
-                // {
-                //     DoBlockToPosStart();
-                // }
+                if (_block.IsPut)
+                {
+                    PutBlock();
+                    IsPut = true;
+                    _EventGamePlay.NextGenBlock?.Invoke();
+                }
+                else
+                {
+                    DoBlockToPosStart();
+                }
             }
         }
 
-        private void ShowShadow()
-        {
-        }
-
-        // when block can't put into frame
         private void DoBlockToPosStart()
         {
             _block.Trf.DOScale(.68f, .1f).SetEase(Ease.Linear).From(1);
             _block.Trf.DOMove(_position, .05f).SetEase(Ease.Linear);
-            //_block.GetComponent<_CreatorBlock>().ResetWhenUnPick();
         }
 
         private void PutBlock()
         {
-          //  _block.GetComponent<_CreatorBlock>().PutBlock();
-            _block.Trf.position = _position;
+            _block.PutBlock(_boardGame);
+            _block.Trf.gameObject.SetActive(false);
         }
     }
 }

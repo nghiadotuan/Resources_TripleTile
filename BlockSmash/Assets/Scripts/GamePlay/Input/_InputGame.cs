@@ -5,6 +5,7 @@ namespace GamePlay
     public class _InputGame : _IUpdateAble
     {
         private readonly _DataGenBlockSO _dataGenBlock;
+        private readonly _DataSpriteBlock _dataSpriteBlock;
 
         public _InputGame
         (
@@ -15,7 +16,9 @@ namespace GamePlay
         {
             CreateInputs(gamePlayInit, mainCamera, boardGame);
             _dataGenBlock = gamePlayInit.DataCreateBlock.DataGenBlock;
+            _dataSpriteBlock = gamePlayInit.DataSpriteBlock;
             GenBlocks();
+            _EventGamePlay.NextGenBlock = NextGenBlock;
         }
 
         private _InputFacade[] _inputBlocks;
@@ -43,7 +46,7 @@ namespace GamePlay
         {
             foreach (var input in _inputBlocks)
             {
-                input.GenBlock(_dataGenBlock.ShapeBlockRandom);
+                input.GenBlock(_dataGenBlock.ShapeBlockRandom, _dataSpriteBlock.GetRandomSprite);
             }
         }
 
@@ -53,6 +56,16 @@ namespace GamePlay
             {
                 input.OnUpdate(deltaTime);
             }
+        }
+
+        private void NextGenBlock()
+        {
+            foreach (var input in _inputBlocks)
+            {
+                if(!input.IsPut) return;
+            }
+
+            GenBlocks();
         }
     }
 }

@@ -13,9 +13,26 @@ namespace GamePlay
             _spriteRenderer.sortingOrder = 1;
         }
 
+        public Sprite Sprite => _spriteRenderer.sprite;
+
         public void SetShadow()
         {
             _spriteRenderer.DOFade(0.68f, 0);
+        }
+
+        public void SetBlock()
+        {
+            _spriteRenderer.DOFade(1, 0);
+        }
+
+        public void SetSortingOrder(int value)
+        {
+            _spriteRenderer.sortingOrder = value;
+        }
+
+        public void SetSprite(Sprite sprite)
+        {
+            _spriteRenderer.sprite = sprite;
         }
     }
 }

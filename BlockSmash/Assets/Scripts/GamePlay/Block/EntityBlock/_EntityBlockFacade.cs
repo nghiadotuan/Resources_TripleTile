@@ -7,10 +7,10 @@ namespace GamePlay
     {
         [ShowInInspector] public sbyte X { get; set; }
         [ShowInInspector] public sbyte Y { get; set; }
-        [ShowInInspector] public bool IsActive { get; set; }
+        [ShowInInspector] public bool IsActive { get;  private set; }
 
-        [ShowInInspector] public sbyte XShadow { get; set; } = -1;
-        [ShowInInspector] public sbyte YShadow { get; set; } = -1;
+        [ShowInInspector] public sbyte XEntity { get; set; }
+        [ShowInInspector] public sbyte YEntity { get; set; }
 
         public _SpriteRendererEntityBlock SpriteRenderer { get; private set; }
 
@@ -29,13 +29,8 @@ namespace GamePlay
 
         public void SetActive(bool isActive)
         {
+            IsActive = isActive;
             gameObject.SetActive(isActive);
-        }
-
-        public void SetXYShadow(sbyte x, sbyte y)
-        {
-            XShadow = x;
-            YShadow = y;
         }
     }
 }

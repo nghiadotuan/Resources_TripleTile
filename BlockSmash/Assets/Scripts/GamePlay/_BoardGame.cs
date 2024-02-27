@@ -61,33 +61,51 @@ namespace GamePlay
         public _EntityBlockFacade GetEntityBlock(sbyte x, sbyte y)
         {
             if (x < 0 || y < 0) return null;
+            if (x >= _sizeBoard.x || y >= _sizeBoard.y) return null;
             return _matrixEntityBlocks[x, y];
         }
 
-        private bool IsEntityBlockIntoAreaShadow(Vector3 pos1, Vector3 pos2)
+        private bool IsShadow(Vector3 pos1, Vector3 pos2)
         {
             if (Mathf.Abs(pos1.x - pos2.x) > _distanceCheckShadow) return false;
             if (Mathf.Abs(pos1.y - pos2.y) > _distanceCheckShadow) return false;
             return true;
         }
 
-        public void ShowShadow(_EntityBlockFacade entity)
+        public (sbyte, sbyte) GetIDShowShadow(_EntityBlockFacade entity)
         {
-            for (var i = 0; i != _sizeBoard.y; i++)
+            // for (var i = 0; i != _sizeBoard.y; i++)
+            // {
+            //     for (var j = 0; j != _sizeBoard.x; j++)
+            //     {
+            //         var shadow = _matrixEntityBlocks[j, i];
+            //         if (shadow.IsActive) continue;
+            //         if (!IsShadow(entity.Pos, shadow.Pos)) continue;
+            //         return ((sbyte) j, (sbyte) i);
+            //     }
+            // }
+
+            foreach (var shadow in _matrixEntityBlocks)
             {
-                for (var j = 0; j != _sizeBoard.x; j++)
-                {
-                    var shadow = _matrixEntityBlocks[j, i];
-                    if (shadow.IsActive) continue;
-                    if (!IsEntityBlockIntoAreaShadow(entity.Pos, shadow.Pos)) continue;
-                    Debug.Log(entity.Pos + "  " + shadow.Pos + "  "+ j + "  "+i);
-                    Debug.Break();
-                    shadow.SetActive(true);
-                    if (entity.XShadow >= 0 && entity.YShadow >= 0)
-                        GetEntityBlock(entity.XShadow, entity.YShadow).SetActive(false);
-                    entity.SetXYShadow((sbyte) j, (sbyte) i);
-                }
+                if (shadow.IsActive) continue;
+                if (!IsShadow(entity.Pos, shadow.Pos)) continue;
+                return (shadow.X, shadow.Y);
             }
+
+            return (-1, -1);
+        }
+
+        public void ShowBlock(sbyte x, sbyte y)
+        {
+            if (x < 0 || y < 0)
+            {
+                Debug.LogError($"can't get block with x = {x} and y = {y}");
+                return;
+            }
+
+            var entity = GetEntityBlock(x, y);
+            entity.SpriteRenderer.SetBlock();
+            entity.SetActive(true);
         }
     }
 }

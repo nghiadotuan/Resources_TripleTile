@@ -39,20 +39,20 @@ public class _CreatorBlock : MonoBehaviour
 
         var pos = Vector2.zero;
         int count = 0;
-        var shape = _data.ListShapeBlock[index].Shapes;
-        // for (var i = 0; i != _block.GetLength(1); i++)
-        // {
-        //     for (var j = 0; j != _block.GetLength(0); j++)
-        //     {
-        //         var block = _block[j, i];
-        //         block.transform.localPosition = _dataCreateBlock.PosLocalEntityBlock[j, i];
-        //         block.SetActive(shape[j, i]);
-        //         block.GetComponent<_EntityBlock>().IsActive = shape[j, i];
-        //         if (!shape[j, i]) continue;
-        //         pos += (Vector2) block.transform.localPosition;
-        //         count++;
-        //     }
-        // }
+        var shape = _data.ListShapeBlock[index].Shapes[0];
+        for (var i = 0; i != _block.GetLength(1); i++)
+        {
+            for (var j = 0; j != _block.GetLength(0); j++)
+            {
+                var block = _block[j, i];
+                block.transform.localPosition = _dataCreateBlock.PosLocalEntityBlock[j, i];
+                block.SetActive(shape[j, i]);
+                block.GetComponent<_EntityBlock>().IsActive = shape[j, i];
+                if (!shape[j, i]) continue;
+                pos += (Vector2) block.transform.localPosition;
+                count++;
+            }
+        }
 
         pos /= count;
 

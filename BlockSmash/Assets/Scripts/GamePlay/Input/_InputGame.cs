@@ -1,4 +1,7 @@
-﻿using Sirenix.OdinInspector;
+﻿using System;
+using System.Threading;
+using Cysharp.Threading.Tasks;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace GamePlay
@@ -8,20 +11,23 @@ namespace GamePlay
         private readonly _DataGenBlockSO _dataGenBlock;
         private readonly _DataSpriteBlock _dataSpriteBlock;
         [ShowInInspector] private readonly _DataInputGame _dataInputGame;
+        private readonly CancellationTokenSource _cts;
 
         public _InputGame
         (
             _GamePlayInit gamePlayInit,
             Camera mainCamera,
-            _BoardGame boardGame
+            _BoardGame boardGame,
+            CancellationTokenSource cts
         )
         {
+            _cts = cts;
+            _dataSpriteBlock = gamePlayInit.DataSpriteBlock;
             _dataInputGame = new _DataInputGame();
             CreateInputs(gamePlayInit, mainCamera, boardGame);
             _dataGenBlock = gamePlayInit.DataCreateBlock.DataGenBlock;
-            _dataSpriteBlock = gamePlayInit.DataSpriteBlock;
-            GenBlocks();
             _EventGamePlay.NextGenBlock = NextGenBlock;
+            _EventGamePlay.IsGameOver = IsGameOver;
         }
 
         private _InputFacade[] _inputBlocks;
@@ -47,12 +53,13 @@ namespace GamePlay
                     gamePlayInit.InitInput.PosInput[i],
                     size, gamePlayInit.DataCreateBlock,
                     gamePlayInit.PrefabEntityBlock, boardGame,
-                    _dataInputGame
+                    _dataInputGame,
+                    _dataSpriteBlock, _cts
                 );
             }
         }
 
-        private void GenBlocks()
+        public void GenBlocks()
         {
             foreach (var input in _inputBlocks)
             {
@@ -76,6 +83,22 @@ namespace GamePlay
             }
 
             GenBlocks();
+        }
+
+        private bool IsGameOver()
+        {
+            foreach (var input in _inputBlocks)
+            {
+                input.CheckSelect();
+            }
+
+            foreach (var input in _inputBlocks)
+            {
+                if (input.IsPut) continue;
+                if (!input.IsNotSelect) return false;
+            }
+
+            return true;
         }
     }
 }

@@ -1,5 +1,5 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
+using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -12,6 +12,7 @@ namespace GamePlay
 
         [ShowInInspector] private _BoardGame _boardGame;
         [ShowInInspector] private _InputGame _inputGame;
+        private _Camera _camera;
 
         private CancellationTokenSource _cts;
 
@@ -22,18 +23,32 @@ namespace GamePlay
             _gamePlayInit.Init();
             CreateBoardGame();
             CreateInputsGame();
+            CreateCameraLogic();
+        }
+
+        private async void Start()
+        {
+            await _boardGame.WaitDisableAllEntityBlockWhenGameOver();
+            _boardGame.ResetBoardGame();
+            await UniTask.Yield(this.GetCancellationTokenOnDestroy());
+            _inputGame.GenBlocks();
         }
 
         // board game: chua cac entity block
         private void CreateBoardGame()
         {
-            _boardGame = new _BoardGame(_gamePlayInit, _cts);
+            _boardGame = new _BoardGame(_gamePlayInit,_cts);
         }
 
         // logic bat su kien user cham vao block
         private void CreateInputsGame()
         {
-            _inputGame = new _InputGame(_gamePlayInit, _mainCamera, _boardGame);
+            _inputGame = new _InputGame(_gamePlayInit, _mainCamera, _boardGame, _cts);
+        }
+
+        private void CreateCameraLogic()
+        {
+            _camera = new _Camera(_mainCamera, _gamePlayInit.DataCameraDefault);
         }
 
         private void Update()

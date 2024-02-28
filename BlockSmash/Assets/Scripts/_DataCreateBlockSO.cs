@@ -14,6 +14,7 @@ public class _DataCreateBlockSO : ScriptableObject
     [Button]
     public void Init()
     {
+        // tai sao la 5: max size cua block la 5.
         _posLocalEntityBlock = new Vector2[5, 5];
         var centerIndex = 2;
         for (var i = 0; i != _posLocalEntityBlock.GetLength(1); i++)
@@ -22,7 +23,7 @@ public class _DataCreateBlockSO : ScriptableObject
             for (var j = 0; j != _posLocalEntityBlock.GetLength(0); j++)
             {
                 var x = (j - centerIndex) * _distance;
-                _posLocalEntityBlock[i, j] = new Vector2(x, y);
+                _posLocalEntityBlock[j, i] = new Vector2(x, y);
             }
         }
     }

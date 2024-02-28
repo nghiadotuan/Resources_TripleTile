@@ -1,4 +1,5 @@
 ﻿using DG.Tweening;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace GamePlay
@@ -13,7 +14,7 @@ namespace GamePlay
             _spriteRenderer.sortingOrder = 1;
         }
 
-        public Sprite RootSprite { get; private set; }
+        [ShowInInspector] public Sprite RootSprite { get; private set; }
         public Sprite SpriteBlock => _spriteRenderer.sprite;
 
         public void SetShadow()
@@ -35,16 +36,19 @@ namespace GamePlay
         {
             RootSprite = sprite;
             _spriteRenderer.sprite = sprite;
+            //MyDebug.Log("Set sprite block "+ _spriteRenderer.gameObject.name, ColorDebugEnum.Blue);
         }
 
         public void SetHighLightSprite(Sprite sprite)
         {
             _spriteRenderer.sprite = sprite;
+            //MyDebug.Log("Set Highlight block "+ _spriteRenderer.gameObject.name, ColorDebugEnum.Yellow);
         }
 
         public void SetRootSprite()
         {
             _spriteRenderer.sprite = RootSprite;
+           // MyDebug.Log("Set Root block "+ _spriteRenderer.gameObject.name, ColorDebugEnum.Red);
         }
     }
 }

@@ -11,6 +11,8 @@ namespace GamePlay
         [SerializeField, TabGroup("Input")] private _InitInput _initInput;
         [SerializeField, TabGroup("Block")] private _DataCreateBlock _dataCreateBlock;
         [SerializeField, TabGroup("Block")] private List<_DataSpriteBlock> _listDataSpriteBlock;
+        [SerializeField, TabGroup("Camera")] private _DataCameraDefault _dataCameraDefault;
+
         [SerializeField, TabGroup("Common")] private float _distanceEntityBlock;
         [SerializeField, TabGroup("Common")] private float _distanceCheckPutBlock;
         [SerializeField, TabGroup("Common")] private _EntityBlockFacade _prefabEntityBlock;
@@ -24,6 +26,7 @@ namespace GamePlay
         public _InitInput InitInput => _initInput;
         public _DataCreateBlock DataCreateBlock => _dataCreateBlock;
         public _DataSpriteBlock DataSpriteBlock => _listDataSpriteBlock[Random.Range(0, _listDataSpriteBlock.Count-1)];
+        public _DataCameraDefault DataCameraDefault => _dataCameraDefault;
         public float DistanceEntityBlock => _distanceEntityBlock;
         public float DistanceCheckPutBlock => _distanceCheckPutBlock;
         public _EntityBlockFacade PrefabEntityBlock => _prefabEntityBlock;

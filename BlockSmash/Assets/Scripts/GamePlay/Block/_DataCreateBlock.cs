@@ -23,7 +23,7 @@ namespace GamePlay
                 for (var j = 0; j != PosLocalEntityBlock.GetLength(0); j++)
                 {
                     var x = (j - centerIndex) * _distance;
-                    PosLocalEntityBlock[i, j] = new Vector2(x, y);
+                    PosLocalEntityBlock[j, i] = new Vector2(x, y);
                 }
             }
         }

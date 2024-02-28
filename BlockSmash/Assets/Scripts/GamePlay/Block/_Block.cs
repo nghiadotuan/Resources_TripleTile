@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using DG.Tweening;
+﻿using DG.Tweening;
 using Extensions.GameObjects;
 using UnityEngine;
 
@@ -10,13 +9,15 @@ namespace GamePlay
         private readonly Vector2 _posInputBlock;
         private readonly _DataCreateBlock _dataCreateBlock;
         private readonly _DataInputGame _dataInputGame;
+        private readonly Sprite _spriteDisable;
 
         public _Block
         (
             _DataCreateBlock dataCreateBlock,
             _EntityBlockFacade prefab,
             Vector2 posInputBlock,
-            _DataInputGame dataInputGame
+            _DataInputGame dataInputGame,
+            Sprite spriteDisable
         )
         {
             Trf = new GameObject().transform;
@@ -27,6 +28,7 @@ namespace GamePlay
             CreateEntities(dataCreateBlock, prefab);
             _dataCreateBlock = dataCreateBlock;
             _dataInputGame = dataInputGame;
+            _spriteDisable = spriteDisable;
         }
 
         private _EntityBlockFacade[,] _matrixEntitiesBlock;
@@ -49,7 +51,7 @@ namespace GamePlay
                     block.transform.localPosition = dataCreateBlock.PosLocalEntityBlock[j, i];
                     block.SetActive(false);
                     _matrixEntitiesBlock[j, i] = block;
-                    block.SetXY((sbyte) (j - 2), (sbyte) (i - 2));
+                    block.SetXY((sbyte) (j), (sbyte) (i));
                     block.SpriteRenderer.SetSortingOrder(2);
                 }
             }
@@ -130,28 +132,26 @@ namespace GamePlay
         private void CheckFullRowAndColumnAndHighLight(_BoardGame boardGame)
         {
             _dataInputGame.SetListCheckFullRowAndColumn();
-            foreach (var x in _dataInputGame.ListXCheckFullRow)
+            _dataInputGame.SetListXYFullRowAndColumn(boardGame);
+
+            foreach (var x in _dataInputGame.ListXNotFull)
             {
-                if (boardGame.IsFullColumn(x))
-                {
-                    boardGame.HighlightColumn(x, _sprite);
-                }
-                else
-                {
-                    boardGame.SetRootSpriteColumn(x);
-                }
+                boardGame.SetRootSpriteColumn(x);
             }
 
-            foreach (var y in _dataInputGame.ListYCheckFullColumn)
+            foreach (var y in _dataInputGame.ListYNotFull)
             {
-                if (boardGame.IsFullRow(y))
-                {
-                    boardGame.HighlightRow(y, _sprite);
-                }
-                else
-                {
-                    boardGame.SetRootSpriteRow(y);
-                }
+                boardGame.SetRootSpriteRow(y);
+            }
+
+            foreach (var x in _dataInputGame.ListXFull)
+            {
+                boardGame.HighlightColumn(x, _sprite);
+            }
+
+            foreach (var y in _dataInputGame.ListYFull)
+            {
+                boardGame.HighlightRow(y, _sprite);
             }
         }
 
@@ -196,6 +196,60 @@ namespace GamePlay
                 if (!entity.IsActive) continue;
                 entity.SpriteRenderer.SetSpriteBlock(sprite);
             }
+        }
+
+        // Block co the chon dc khi no con cho.
+        public bool IsBlockCanSelect(_BoardGame boardGame)
+        {
+            foreach (var entity in boardGame.MatrixEntityBlocks)
+            {
+                if (entity.IsActive) continue;
+                if (IsCheckXYBlockToSelect(entity.X, entity.Y, boardGame))
+                {
+                    SetSpriteBlock(_sprite);
+                    return true;
+                }
+            }
+
+            SetSprite(_spriteDisable);
+            return false;
+
+            void SetSprite(Sprite sprite)
+            {
+                foreach (var entity in _matrixEntitiesBlock)
+                {
+                    if (!entity.IsActive) continue;
+                    entity.SpriteRenderer.SetSpriteBlock(sprite);
+                }
+            }
+        }
+
+        private bool IsCheckXYBlockToSelect(sbyte x, sbyte y, _BoardGame boardGame)
+        {
+            sbyte xCheck = 0;
+            sbyte yCheck = 0;
+            bool isSet = false;
+            foreach (var entity in _matrixEntitiesBlock)
+            {
+                if (!entity.IsActive) continue;
+                if (!isSet)
+                {
+                    isSet = true;
+                    xCheck = (sbyte) (x - entity.X);
+                    yCheck = (sbyte) (y - entity.Y);
+                }
+                else
+                {
+                    var newX = (sbyte) (xCheck + entity.X);
+                    var newY = (sbyte) (yCheck + entity.Y);
+                    MyDebug.Log(newX + "  " + newY + "  "+ x + "  "+ y);
+                    var entityBoardGame = boardGame.GetEntityBlock(newX, newY);
+                    if (!entityBoardGame) return false;
+                    if (entityBoardGame.IsActive) return false;
+                }
+            }
+
+            return true;
         }
     }
 }

@@ -1,6 +1,10 @@
-﻿using DG.Tweening;
+﻿using System;
+using System.Threading;
+using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace GamePlay
 {
@@ -11,6 +15,7 @@ namespace GamePlay
         private readonly _Block _block;
         private readonly _BoardGame _boardGame;
         private readonly _DataInputGame _dataInputGame;
+        private readonly CancellationTokenSource _cts;
 
         public _InputLogic
         (
@@ -18,7 +23,8 @@ namespace GamePlay
             Vector2 position,
             _Block block,
             _BoardGame boardGame,
-            _DataInputGame dataInputGame
+            _DataInputGame dataInputGame,
+            CancellationTokenSource cts
         )
         {
             _cam = camera;
@@ -26,14 +32,17 @@ namespace GamePlay
             _block = block;
             _boardGame = boardGame;
             _dataInputGame = dataInputGame;
+            _cts = cts;
         }
 
         [ShowInInspector] private bool _isPick;
+        [ShowInInspector] private bool _isNotSelect;
 
         public bool IsPut { get; set; }
 
         public void OnMouseDown()
         {
+            if (_isNotSelect) return;
             _dataInputGame.ListXYShadow.Clear();
             _block.Trf.DOScale(1, .15f).SetEase(Ease.OutBack).From(0.68f);
             _isPick = true;
@@ -59,6 +68,7 @@ namespace GamePlay
                     PutBlock();
                     IsPut = true;
                     _EventGamePlay.NextGenBlock?.Invoke();
+                    CheckGameOver();
                 }
                 else
                 {
@@ -77,6 +87,24 @@ namespace GamePlay
         {
             _block.PutBlock(_boardGame);
             _block.Trf.gameObject.SetActive(false);
+        }
+
+        private async void CheckGameOver()
+        {
+            await UniTask.Delay(TimeSpan.FromSeconds(0.1f), cancellationToken: _cts.Token);
+            if (_EventGamePlay.IsGameOver.Invoke())
+            {
+                await UniTask.Delay(TimeSpan.FromSeconds(0.5f), cancellationToken: _cts.Token);
+                await _boardGame.WaitDisableAllEntityBlockWhenGameOver();
+                await UniTask.Delay(TimeSpan.FromSeconds(1), cancellationToken: _cts.Token);
+                SceneManager.LoadScene(0);
+            }
+        }
+
+        public bool IsCheckSelect()
+        {
+            _isNotSelect = !_block.IsBlockCanSelect(_boardGame);
+            return _isNotSelect;
         }
     }
 }

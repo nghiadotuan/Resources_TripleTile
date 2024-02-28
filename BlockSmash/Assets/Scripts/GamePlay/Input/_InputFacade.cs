@@ -1,4 +1,5 @@
-﻿using Sirenix.OdinInspector;
+﻿using System.Threading;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace GamePlay
@@ -16,17 +17,20 @@ namespace GamePlay
             _DataCreateBlock dataCreateBlock,
             _EntityBlockFacade prefab,
             _BoardGame boardGame,
-            _DataInputGame dataInputGame
+            _DataInputGame dataInputGame,
+            _DataSpriteBlock dataSpriteBlock,
+            CancellationTokenSource cts
         )
         {
             var box = gameObject.AddComponent<BoxCollider2D>();
             box.size = size;
             transform.position = pos;
-            _block = new _Block(dataCreateBlock, prefab, pos, dataInputGame);
-            _inputLogic = new _InputLogic(cam, pos, _block, boardGame, dataInputGame);
+            _block = new _Block(dataCreateBlock, prefab, pos, dataInputGame, dataSpriteBlock.SpriteDisable);
+            _inputLogic = new _InputLogic(cam, pos, _block, boardGame, dataInputGame, cts);
         }
 
         public bool IsPut => _inputLogic.IsPut;
+        public bool IsNotSelect { get; private set; }
 
         private void OnMouseDown()
         {
@@ -40,6 +44,7 @@ namespace GamePlay
             _block.GenBlock(shape);
             _block.SetSpriteBlock(sprite);
             _block.Trf.gameObject.SetActive(true);
+            CheckSelect();
         }
 
 #if UNITY_EDITOR
@@ -57,10 +62,21 @@ namespace GamePlay
             _block.GenBlock(_data.ListShapeBlock[index]);
         }
 
+        [Button]
+        private void LogCheckBlockCanSelect()
+        {
+            Debug.Log(_inputLogic.IsCheckSelect());
+        }
+
 #endif
         public void OnUpdate(float deltaTime)
         {
             _inputLogic.OnUpdate(deltaTime);
+        }
+
+        public void CheckSelect()
+        {
+            IsNotSelect = _inputLogic.IsCheckSelect();
         }
     }
 }

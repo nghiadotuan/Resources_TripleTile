@@ -14,6 +14,7 @@ namespace GamePlay
         private readonly _EntityBlockFacade _prefabEntityBlock;
         private readonly float _distanceCheckShadow;
         private readonly CancellationTokenSource _cts;
+        private readonly _DataSpriteBlock _dataSpriteBlock;
 
         public _BoardGame(_GamePlayInit init, CancellationTokenSource cts)
         {
@@ -22,12 +23,15 @@ namespace GamePlay
             _distanceEntityBlock = init.DistanceEntityBlock;
             _prefabEntityBlock = init.PrefabEntityBlock;
             _distanceCheckShadow = init.DistanceCheckPutBlock;
+            _dataSpriteBlock = init.DataSpriteBlock;
             _cts = cts;
             CreateBoard(init);
         }
 
         private Transform _trfBoard;
         private _EntityBlockFacade[,] _matrixEntityBlocks;
+
+        public _EntityBlockFacade[,] MatrixEntityBlocks => _matrixEntityBlocks;
 
         private void CreateBoard(_GamePlayInit init)
         {
@@ -169,6 +173,56 @@ namespace GamePlay
             {
                 await UniTask.Delay(TimeSpan.FromSeconds(0.01f), cancellationToken: _cts.Token);
                 _matrixEntityBlocks[x, i].Destroy();
+            }
+        }
+
+        public async UniTask WaitDisableAllEntityBlockWhenGameOver()
+        {
+            ChangeRowSpiteWhenGameOver(3, 4, 3);
+            ChangeRowSpiteWhenGameOver(3, 4, 4);
+            await UniTask.Delay(TimeSpan.FromSeconds(0.1f), cancellationToken: _cts.Token);
+            ChangeRowSpiteWhenGameOver(2, 5, 2);
+            ChangeRowSpiteWhenGameOver(2, 5, 5);
+            ChangeColumnSpiteWhenGameOver(2, 5, 2);
+            ChangeColumnSpiteWhenGameOver(2, 5, 5);
+            await UniTask.Delay(TimeSpan.FromSeconds(0.1f), cancellationToken: _cts.Token);
+            ChangeRowSpiteWhenGameOver(1, 6, 1);
+            ChangeRowSpiteWhenGameOver(1, 6, 6);
+            ChangeColumnSpiteWhenGameOver(1, 6, 1);
+            ChangeColumnSpiteWhenGameOver(1, 6, 6);
+            await UniTask.Delay(TimeSpan.FromSeconds(0.1f), cancellationToken: _cts.Token);
+            ChangeRowSpiteWhenGameOver(0, 7, 0);
+            ChangeRowSpiteWhenGameOver(0, 7, 7);
+            ChangeColumnSpiteWhenGameOver(0, 7, 0);
+            ChangeColumnSpiteWhenGameOver(0, 7, 7);
+            await UniTask.Delay(TimeSpan.FromSeconds(0.2f), cancellationToken: _cts.Token);
+        }
+
+        public void ResetBoardGame()
+        {
+            foreach (var entity in _matrixEntityBlocks)
+            {
+                entity.SetActive(false);
+            }
+        }
+
+        private void ChangeRowSpiteWhenGameOver(sbyte startX, sbyte endX, sbyte y)
+        {
+            for (var i = startX; i <= endX; i++)
+            {
+                var entity = _matrixEntityBlocks[i, y];
+                entity.SetActive(true);
+                entity.SpriteRenderer.SetHighLightSprite(_dataSpriteBlock.GetRandomSprite);
+            }
+        }
+
+        private void ChangeColumnSpiteWhenGameOver(sbyte startY, sbyte endY, sbyte x)
+        {
+            for (var i = startY; i <= endY; i++)
+            {
+                var entity = _matrixEntityBlocks[x, i];
+                entity.SetActive(true);
+                entity.SpriteRenderer.SetHighLightSprite(_dataSpriteBlock.GetRandomSprite);
             }
         }
     }

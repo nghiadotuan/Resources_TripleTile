@@ -52,14 +52,9 @@ namespace GamePlay
         [SerializeField] private _DataGenBlockSO _data;
 
         [Button]
-        private void GenBlock(int index)
+        private void GenBlock(_TypeBlockEnum type)
         {
-            if (index >= _data.ListShapeBlock.Count)
-            {
-                index = _data.ListShapeBlock.Count - 1;
-            }
-
-            _block.GenBlock(_data.ListShapeBlock[index]);
+            _block.GenBlock(_data.DicShapeBlock[type]);
         }
 
         [Button]

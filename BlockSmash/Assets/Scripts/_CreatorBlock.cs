@@ -1,4 +1,5 @@
-﻿using Sirenix.OdinInspector;
+﻿using GamePlay;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class _CreatorBlock : MonoBehaviour
@@ -32,40 +33,40 @@ public class _CreatorBlock : MonoBehaviour
     [Button]
     private void SetBlock(int index)
     {
-        if (index >= _data.ListShapeBlock.Count)
-        {
-            index = _data.ListShapeBlock.Count - 1;
-        }
+        // if (index >= _data.ListShapeBlock.Count)
+        // {
+        //     index = _data.ListShapeBlock.Count - 1;
+        // }
+        //
+        // var pos = Vector2.zero;
+        // int count = 0;
+        // var shape = _data.ListShapeBlock[index].Shapes[0];
+        // for (var i = 0; i != _block.GetLength(1); i++)
+        // {
+        //     for (var j = 0; j != _block.GetLength(0); j++)
+        //     {
+        //         var block = _block[j, i];
+        //         block.transform.localPosition = _dataCreateBlock.PosLocalEntityBlock[j, i];
+        //         block.SetActive(shape[j, i]);
+        //         block.GetComponent<_EntityBlock>().IsActive = shape[j, i];
+        //         if (!shape[j, i]) continue;
+        //         pos += (Vector2) block.transform.localPosition;
+        //         count++;
+        //     }
+        // }
 
-        var pos = Vector2.zero;
-        int count = 0;
-        var shape = _data.ListShapeBlock[index].Shapes[0];
-        for (var i = 0; i != _block.GetLength(1); i++)
-        {
-            for (var j = 0; j != _block.GetLength(0); j++)
-            {
-                var block = _block[j, i];
-                block.transform.localPosition = _dataCreateBlock.PosLocalEntityBlock[j, i];
-                block.SetActive(shape[j, i]);
-                block.GetComponent<_EntityBlock>().IsActive = shape[j, i];
-                if (!shape[j, i]) continue;
-                pos += (Vector2) block.transform.localPosition;
-                count++;
-            }
-        }
+       // pos /= count;
 
-        pos /= count;
-
-        for (var i = 0; i != _block.GetLength(1); i++)
-        {
-            for (var j = 0; j != _block.GetLength(0); j++)
-            {
-                if (!_block[j, i].activeInHierarchy) continue;
-                Vector2 p = _block[j, i].transform.localPosition;
-                p -= pos;
-                _block[j, i].transform.localPosition = p;
-            }
-        }
+        // for (var i = 0; i != _block.GetLength(1); i++)
+        // {
+        //     for (var j = 0; j != _block.GetLength(0); j++)
+        //     {
+        //         if (!_block[j, i].activeInHierarchy) continue;
+        //         Vector2 p = _block[j, i].transform.localPosition;
+        //         p -= pos;
+        //         _block[j, i].transform.localPosition = p;
+        //     }
+        // }
 
         transform.localScale = Vector3.one * .68f;
     }

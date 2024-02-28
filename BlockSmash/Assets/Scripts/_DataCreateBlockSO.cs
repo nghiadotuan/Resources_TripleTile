@@ -1,7 +1,7 @@
 ﻿using Sirenix.OdinInspector;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Gameplay/Data Create Block")]
+[CreateAssetMenu(menuName = "GamePlay/Data Create Block")]
 public class _DataCreateBlockSO : ScriptableObject
 {
     [SerializeField] private float _distance = 1.24f;

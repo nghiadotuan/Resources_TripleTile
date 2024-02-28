@@ -155,12 +155,14 @@ namespace GamePlay
             }
         }
 
-        private void CHeckDestroyRowAndColumn(_BoardGame boardGame)
+        private void CheckDestroyRowAndColumn(_BoardGame boardGame)
         {
+            var numRowAndColumn = 0;
             foreach (var x in _dataInputGame.ListXCheckFullRow)
             {
                 if (boardGame.IsFullColumn(x))
                 {
+                    numRowAndColumn++;
                     boardGame.DestroyColumn(x);
                 }
             }
@@ -169,13 +171,17 @@ namespace GamePlay
             {
                 if (boardGame.IsFullRow(y))
                 {
+                    numRowAndColumn++;
                     boardGame.DestroyRow(y);
                 }
             }
+
+            _DataGamePlay.Score += numRowAndColumn * 10;
         }
 
         public void PutBlock(_BoardGame boardGame)
         {
+            _DataGamePlay.Score += _numEntityBlock;
             foreach (var data in _dataInputGame.ListXYShadow)
             {
                 var shadow = boardGame.GetEntityBlock(data.XShadow, data.YShadow);
@@ -184,7 +190,7 @@ namespace GamePlay
                 shadow.SpriteRenderer.SetBlock();
             }
 
-            CHeckDestroyRowAndColumn(boardGame);
+            CheckDestroyRowAndColumn(boardGame);
             _dataInputGame.ListXYShadow.Clear();
         }
 

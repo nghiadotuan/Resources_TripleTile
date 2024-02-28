@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading;
-using Cysharp.Threading.Tasks;
+﻿using System.Threading;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -11,6 +9,7 @@ namespace GamePlay
         private readonly _DataGenBlockSO _dataGenBlock;
         private readonly _DataSpriteBlock _dataSpriteBlock;
         [ShowInInspector] private readonly _DataInputGame _dataInputGame;
+        private readonly _DataRatioGenBlockSO _dataRatioGenBlock;
         private readonly CancellationTokenSource _cts;
 
         public _InputGame
@@ -23,6 +22,7 @@ namespace GamePlay
         {
             _cts = cts;
             _dataSpriteBlock = gamePlayInit.DataSpriteBlock;
+            _dataRatioGenBlock = gamePlayInit.DataRatioGenBlockSo;
             _dataInputGame = new _DataInputGame();
             CreateInputs(gamePlayInit, mainCamera, boardGame);
             _dataGenBlock = gamePlayInit.DataCreateBlock.DataGenBlock;
@@ -63,7 +63,8 @@ namespace GamePlay
         {
             foreach (var input in _inputBlocks)
             {
-                input.GenBlock(_dataGenBlock.ShapeBlockRandom, _dataSpriteBlock.GetRandomSprite);
+                var type = _dataRatioGenBlock.GetType(_DataGamePlay.Score);
+                input.GenBlock(_dataGenBlock.DicShapeBlock[type], _dataSpriteBlock.GetRandomSprite);
             }
         }
 

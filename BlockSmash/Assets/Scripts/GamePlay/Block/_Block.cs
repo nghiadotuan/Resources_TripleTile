@@ -10,6 +10,7 @@ namespace GamePlay
         private readonly _DataCreateBlock _dataCreateBlock;
         private readonly _DataInputGame _dataInputGame;
         private readonly Sprite _spriteDisable;
+        private readonly float _scaleBlock;
 
         public _Block
         (
@@ -17,7 +18,8 @@ namespace GamePlay
             _EntityBlockFacade prefab,
             Vector2 posInputBlock,
             _DataInputGame dataInputGame,
-            Sprite spriteDisable
+            Sprite spriteDisable,
+            float scaleBlock
         )
         {
             Trf = new GameObject().transform;
@@ -29,6 +31,7 @@ namespace GamePlay
             _dataCreateBlock = dataCreateBlock;
             _dataInputGame = dataInputGame;
             _spriteDisable = spriteDisable;
+            _scaleBlock = scaleBlock;
         }
 
         private _EntityBlockFacade[,] _matrixEntitiesBlock;
@@ -90,7 +93,7 @@ namespace GamePlay
                 }
             }
 
-            Trf.DOScale(0.68f, .5f).From(0).SetEase(Ease.OutBack);
+            Trf.DOScale(_scaleBlock, .5f).From(0).SetEase(Ease.OutBack);
         }
 
         public void ShowShadow(_BoardGame boardGame)
@@ -103,13 +106,27 @@ namespace GamePlay
             CheckFullRowAndColumnAndHighLight(boardGame);
             IsPut = false;
             _dataInputGame.ListXYShadow.Clear();
+            var xFirst = 0;
+            var yFirst = 0;
             foreach (var entityBlock in _matrixEntitiesBlock)
             {
                 if (!entityBlock.IsActive) continue;
-                var (x, y) = boardGame.GetIDShowShadow(entityBlock);
-                if (x < 0) continue;
-                var data = new _DataXYShadow(x, y);
-                _dataInputGame.ListXYShadow.Add(data);
+                if (_dataInputGame.ListXYShadow.Count <= 0)
+                {
+                    var (x, y) = boardGame.GetIDShowShadow(entityBlock);
+                    if (x < 0 || y < 0) return;
+                    xFirst = entityBlock.X;
+                    yFirst = entityBlock.Y;
+                    _dataInputGame.ListXYShadow.Add(new _DataXYShadow(x, y));
+                }
+                else
+                {
+                    var x = (sbyte)(_dataInputGame.ListXYShadow[0].XShadow + entityBlock.X - xFirst);
+                    var y = (sbyte)(_dataInputGame.ListXYShadow[0].YShadow + entityBlock.Y - yFirst);
+                    var entityBlockCheck = boardGame.GetEntityBlock(x, y);
+                    if(entityBlockCheck ==  null || entityBlockCheck.IsActive) return;
+                    _dataInputGame.ListXYShadow.Add(new _DataXYShadow(x, y));
+                }
             }
 
             if (_dataInputGame.ListXYShadow.Count < _numEntityBlock)
@@ -248,7 +265,7 @@ namespace GamePlay
                 {
                     var newX = (sbyte) (xCheck + entity.X);
                     var newY = (sbyte) (yCheck + entity.Y);
-                    MyDebug.Log(newX + "  " + newY + "  "+ x + "  "+ y);
+                    MyDebug.Log(newX + "  " + newY + "  " + x + "  " + y);
                     var entityBoardGame = boardGame.GetEntityBlock(newX, newY);
                     if (!entityBoardGame) return false;
                     if (entityBoardGame.IsActive) return false;

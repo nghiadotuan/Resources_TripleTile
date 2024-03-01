@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace GamePlay
 {
-    public class _InputGame : _IUpdateAble
+    public class _InputGame 
     {
         private readonly _DataGenBlockSO _dataGenBlock;
         private readonly _DataSpriteBlock _dataSpriteBlock;
@@ -65,14 +65,6 @@ namespace GamePlay
             {
                 var type = _dataRatioGenBlock.GetType(_DataGamePlay.Score);
                 input.GenBlock(_dataGenBlock.DicShapeBlock[type], _dataSpriteBlock.GetRandomSprite);
-            }
-        }
-
-        public void OnUpdate(float deltaTime)
-        {
-            foreach (var input in _inputBlocks)
-            {
-                input.OnUpdate(deltaTime);
             }
         }
 

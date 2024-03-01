@@ -63,8 +63,9 @@ namespace GamePlay
 #endif
             block.gameObject.SetActive(false);
             block.SetXY(x, y);
-            block.SpriteRenderer.SetShadow();
+            block.SpriteRenderer.SetShadowSprite();
             _matrixEntityBlocks[x, y] = block;
+            block.transform.localScale = Vector3.one * .986f;
         }
 
         public _EntityBlockFacade GetEntityBlock(sbyte x, sbyte y)
@@ -91,19 +92,6 @@ namespace GamePlay
             }
 
             return (-1, -1);
-        }
-
-        public void ShowBlock(sbyte x, sbyte y)
-        {
-            if (x < 0 || y < 0)
-            {
-                Debug.LogError($"can't get block with x = {x} and y = {y}");
-                return;
-            }
-
-            var entity = GetEntityBlock(x, y);
-            entity.SpriteRenderer.SetBlock();
-            entity.SetActive(true);
         }
 
         public bool IsFullRow(int y)

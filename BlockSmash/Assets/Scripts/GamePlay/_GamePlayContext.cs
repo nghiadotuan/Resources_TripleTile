@@ -12,12 +12,12 @@ namespace GamePlay
 
         [ShowInInspector] private _BoardGame _boardGame;
         [ShowInInspector] private _InputGame _inputGame;
-        private _Camera _camera;
 
         private CancellationTokenSource _cts;
 
         private void Awake()
         {
+            SetFPS();
             _cts = new CancellationTokenSource();
             Input.multiTouchEnabled = false;
             _gamePlayInit.Init();
@@ -34,6 +34,12 @@ namespace GamePlay
             _inputGame.GenBlocks();
         }
 
+        private void SetFPS()
+        {
+            QualitySettings.vSyncCount = 0;
+            Application.targetFrameRate = 60;
+        }
+
         // board game: chua cac entity block
         private void CreateBoardGame()
         {
@@ -48,14 +54,14 @@ namespace GamePlay
 
         private void CreateCameraLogic()
         {
-            _camera = new _Camera(_mainCamera, _gamePlayInit.DataCameraDefault);
+            _ = new _Camera(_mainCamera, _gamePlayInit.DataCameraDefault);
         }
 
-        private void Update()
-        {
-            var deltaTime = Time.deltaTime;
-            _inputGame.OnUpdate(deltaTime);
-        }
+        // private void Update()
+        // {
+        //     var deltaTime = Time.deltaTime;
+        //    // _inputGame.OnUpdate(deltaTime);
+        // }
 
         private void OnDestroy()
         {

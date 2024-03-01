@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 
 namespace GamePlay
 {
-    public class _InputLogic : _IUpdateAble
+    public class _InputLogic
     {
         private readonly Camera _cam;
         private readonly Vector2 _position;
@@ -46,34 +46,41 @@ namespace GamePlay
             _dataInputGame.ListXYShadow.Clear();
             _block.Trf.DOScale(1, .15f).SetEase(Ease.OutBack).From(0.68f);
             _isPick = true;
+            UpdateGetMouseButton().Forget();
         }
 
-        public void OnUpdate(float deltaTime)
+        private async UniTask UpdateGetMouseButton()
         {
-            if (!_isPick) return;
-            if (Input.GetMouseButton(0))
+            while (_isPick)
             {
-                var pos = _cam.ScreenToWorldPoint(Input.mousePosition);
-                pos.y += 3;
-                pos.z = 0;
-                _block.Trf.position = pos;
-                _block.ShowShadow(_boardGame);
-            }
+                if (Input.GetMouseButton(0))
+                {
+                    var pos = _cam.ScreenToWorldPoint(Input.mousePosition);
+                    var deltaY = Math.Abs(pos.y - _position.y) / Math.Abs(_position.y);
+                    deltaY *= 3;
+                    pos.y += 3f + deltaY;
+                    pos.z = 0;
+                    _block.Trf.position = pos;
+                    _block.ShowShadow(_boardGame);
+                }
 
-            if (Input.GetMouseButtonUp(0))
-            {
-                _isPick = false;
-                if (_block.IsPut)
+                if (Input.GetMouseButtonUp(0))
                 {
-                    PutBlock();
-                    IsPut = true;
-                    _EventGamePlay.NextGenBlock?.Invoke();
-                    CheckGameOver();
+                    _isPick = false;
+                    if (_block.IsPut)
+                    {
+                        PutBlock();
+                        IsPut = true;
+                        _EventGamePlay.NextGenBlock?.Invoke();
+                        CheckGameOver();
+                    }
+                    else
+                    {
+                        DoBlockToPosStart();
+                    }
                 }
-                else
-                {
-                    DoBlockToPosStart();
-                }
+
+                await UniTask.Yield(cancellationToken: _cts.Token);
             }
         }
 
@@ -91,10 +98,10 @@ namespace GamePlay
 
         private async void CheckGameOver()
         {
-            await UniTask.Delay(TimeSpan.FromSeconds(0.1f), cancellationToken: _cts.Token);
+            await UniTask.Delay(TimeSpan.FromSeconds(0.3f), cancellationToken: _cts.Token);
             if (_EventGamePlay.IsGameOver.Invoke())
             {
-                await UniTask.Delay(TimeSpan.FromSeconds(0.5f), cancellationToken: _cts.Token);
+                await UniTask.Delay(TimeSpan.FromSeconds(2f), cancellationToken: _cts.Token);
                 await _boardGame.WaitDisableAllEntityBlockWhenGameOver();
                 await UniTask.Delay(TimeSpan.FromSeconds(1), cancellationToken: _cts.Token);
                 SceneManager.LoadScene(0);

@@ -5,10 +5,16 @@ namespace GamePlay
 {
     public class _DataInputGame
     {
+        // list x va y cua block dang dc select.
         [ShowInInspector] public List<_DataXYShadow> ListXYShadow { get; } = new();
+
         [ShowInInspector] public List<sbyte> ListXCheckFullRow { get; } = new();
         [ShowInInspector] public List<sbyte> ListYCheckFullColumn { get; } = new();
+
+        // lis x ma KHONG tao thanh hang.
         [ShowInInspector] public List<sbyte> ListXNotFull { get; } = new();
+
+        // list x ma tao thanh hang ngang hoan chinh => x lay tu ListXYShadow 
         [ShowInInspector] public List<sbyte> ListXFull { get; } = new();
         [ShowInInspector] public List<sbyte> ListYNotFull { get; } = new();
         [ShowInInspector] public List<sbyte> ListYFull { get; } = new();

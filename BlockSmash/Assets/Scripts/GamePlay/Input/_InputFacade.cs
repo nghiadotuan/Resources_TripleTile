@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace GamePlay
 {
-    public class _InputFacade : MonoBehaviour, _IUpdateAble
+    public class _InputFacade : MonoBehaviour
     {
         [ShowInInspector] private _InputLogic _inputLogic;
         private _Block _block;
@@ -25,7 +25,7 @@ namespace GamePlay
             var box = gameObject.AddComponent<BoxCollider2D>();
             box.size = size;
             transform.position = pos;
-            _block = new _Block(dataCreateBlock, prefab, pos, dataInputGame, dataSpriteBlock.SpriteDisable);
+            _block = new _Block(dataCreateBlock, prefab, pos, dataInputGame, dataSpriteBlock.SpriteDisable, dataCreateBlock.ScaleBlock);
             _inputLogic = new _InputLogic(cam, pos, _block, boardGame, dataInputGame, cts);
         }
 
@@ -64,10 +64,6 @@ namespace GamePlay
         }
 
 #endif
-        public void OnUpdate(float deltaTime)
-        {
-            _inputLogic.OnUpdate(deltaTime);
-        }
 
         public void CheckSelect()
         {

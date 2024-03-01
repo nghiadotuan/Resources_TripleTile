@@ -7,10 +7,12 @@ namespace GamePlay
     public class _DataCreateBlock
     {
         [SerializeField] private float _distance = 1.2f;
+        [SerializeField] private float _scaleBlock = .5f;
         [SerializeField] private _DataGenBlockSO _dataGenBlock;
 
         [ShowInInspector] public Vector2[,] PosLocalEntityBlock { get; private set; }
         public _DataGenBlockSO DataGenBlock => _dataGenBlock;
+        public float ScaleBlock => _scaleBlock;
 
         public void Init()
         {

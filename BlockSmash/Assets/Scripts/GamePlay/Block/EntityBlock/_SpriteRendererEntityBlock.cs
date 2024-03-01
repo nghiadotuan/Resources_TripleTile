@@ -17,7 +17,7 @@ namespace GamePlay
         [ShowInInspector] public Sprite RootSprite { get; private set; }
         public Sprite SpriteBlock => _spriteRenderer.sprite;
 
-        public void SetShadow()
+        public void SetShadowSprite()
         {
             _spriteRenderer.DOFade(0.68f, 0);
         }

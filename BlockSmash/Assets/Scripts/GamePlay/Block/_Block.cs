@@ -9,7 +9,7 @@ namespace GamePlay
         private readonly Vector2 _posInputBlock;
         private readonly _DataCreateBlock _dataCreateBlock;
         private readonly _DataInputGame _dataInputGame;
-        private readonly Sprite _spriteDisable;
+        private readonly _DataSpriteBlock _dataSpriteBlock;
         private readonly float _scaleBlock;
 
         public _Block
@@ -18,7 +18,7 @@ namespace GamePlay
             _EntityBlockFacade prefab,
             Vector2 posInputBlock,
             _DataInputGame dataInputGame,
-            Sprite spriteDisable,
+            _DataSpriteBlock dataSpriteBlock,
             float scaleBlock
         )
         {
@@ -30,13 +30,13 @@ namespace GamePlay
             CreateEntities(dataCreateBlock, prefab);
             _dataCreateBlock = dataCreateBlock;
             _dataInputGame = dataInputGame;
-            _spriteDisable = spriteDisable;
+            _dataSpriteBlock = dataSpriteBlock;
             _scaleBlock = scaleBlock;
         }
 
         private _EntityBlockFacade[,] _matrixEntitiesBlock;
         private int _numEntityBlock;
-        private Sprite _sprite;
+        private int _indexSprite;
 
         public Transform Trf { get; }
         public byte IndexSprite { get; set; }
@@ -121,10 +121,10 @@ namespace GamePlay
                 }
                 else
                 {
-                    var x = (sbyte)(_dataInputGame.ListXYShadow[0].XShadow + entityBlock.X - xFirst);
-                    var y = (sbyte)(_dataInputGame.ListXYShadow[0].YShadow + entityBlock.Y - yFirst);
+                    var x = (sbyte) (_dataInputGame.ListXYShadow[0].XShadow + entityBlock.X - xFirst);
+                    var y = (sbyte) (_dataInputGame.ListXYShadow[0].YShadow + entityBlock.Y - yFirst);
                     var entityBlockCheck = boardGame.GetEntityBlock(x, y);
-                    if(entityBlockCheck ==  null || entityBlockCheck.IsActive) return;
+                    if (entityBlockCheck == null || entityBlockCheck.IsActive) return;
                     _dataInputGame.ListXYShadow.Add(new _DataXYShadow(x, y));
                 }
             }
@@ -140,7 +140,7 @@ namespace GamePlay
             {
                 var shadow = boardGame.GetEntityBlock(data.XShadow, data.YShadow);
                 shadow.SetActive(true);
-                shadow.SpriteRenderer.SetSpriteBlock(_sprite);
+                shadow.SpriteRenderer.SetSpriteBlock(_dataSpriteBlock.GetSprite(_indexSprite));
             }
 
             CheckFullRowAndColumnAndHighLight(boardGame);
@@ -163,33 +163,33 @@ namespace GamePlay
 
             foreach (var x in _dataInputGame.ListXFull)
             {
-                boardGame.HighlightColumn(x, _sprite);
+                boardGame.HighlightColumn(x, _dataSpriteBlock.GetSprite(_indexSprite));
             }
 
             foreach (var y in _dataInputGame.ListYFull)
             {
-                boardGame.HighlightRow(y, _sprite);
+                boardGame.HighlightRow(y, _dataSpriteBlock.GetSprite(_indexSprite));
             }
         }
 
         private void CheckDestroyRowAndColumn(_BoardGame boardGame)
         {
             var numRowAndColumn = 0;
-            foreach (var x in _dataInputGame.ListXCheckFullRow)
+            foreach (var x in _dataInputGame.ListXCheckFullAColumn)
             {
                 if (boardGame.IsFullColumn(x))
                 {
                     numRowAndColumn++;
-                    boardGame.DestroyColumn(x);
+                    boardGame.DestroyColumn(x, _indexSprite);
                 }
             }
 
-            foreach (var y in _dataInputGame.ListYCheckFullColumn)
+            foreach (var y in _dataInputGame.ListYCheckFullARow)
             {
                 if (boardGame.IsFullRow(y))
                 {
                     numRowAndColumn++;
-                    boardGame.DestroyRow(y);
+                    boardGame.DestroyRow(y, _indexSprite);
                 }
             }
 
@@ -203,7 +203,7 @@ namespace GamePlay
             {
                 var shadow = boardGame.GetEntityBlock(data.XShadow, data.YShadow);
                 shadow.SetActive(true);
-                shadow.SpriteRenderer.SetSpriteBlock(_sprite);
+                shadow.SpriteRenderer.SetSpriteBlock(_dataSpriteBlock.GetSprite(_indexSprite));
                 shadow.SpriteRenderer.SetBlock();
             }
 
@@ -211,13 +211,13 @@ namespace GamePlay
             _dataInputGame.ListXYShadow.Clear();
         }
 
-        public void SetSpriteBlock(Sprite sprite)
+        public void SetSpriteBlock(int indexSprite)
         {
-            _sprite = sprite;
+            _indexSprite = indexSprite;
             foreach (var entity in _matrixEntitiesBlock)
             {
                 if (!entity.IsActive) continue;
-                entity.SpriteRenderer.SetSpriteBlock(sprite);
+                entity.SpriteRenderer.SetSpriteBlock(_dataSpriteBlock.GetSprite(_indexSprite));
             }
         }
 
@@ -229,12 +229,12 @@ namespace GamePlay
                 if (entity.IsActive) continue;
                 if (IsCheckXYBlockToSelect(entity.X, entity.Y, boardGame))
                 {
-                    SetSpriteBlock(_sprite);
+                    SetSpriteBlock(_indexSprite);
                     return true;
                 }
             }
 
-            SetSprite(_spriteDisable);
+            SetSprite(_dataSpriteBlock.SpriteDisable);
             return false;
 
             void SetSprite(Sprite sprite)
@@ -265,7 +265,7 @@ namespace GamePlay
                 {
                     var newX = (sbyte) (xCheck + entity.X);
                     var newY = (sbyte) (yCheck + entity.Y);
-                    MyDebug.Log(newX + "  " + newY + "  " + x + "  " + y);
+                    // MyDebug.Log(newX + "  " + newY + "  " + x + "  " + y);
                     var entityBoardGame = boardGame.GetEntityBlock(newX, newY);
                     if (!entityBoardGame) return false;
                     if (entityBoardGame.IsActive) return false;

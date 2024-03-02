@@ -59,12 +59,12 @@ namespace Extensions.GameObjects
                 : Object.Instantiate(prefab, parent);
         }
 
-        public static T CreateInstance<T>(this T prefab, Vector3 pos,
+        public static T CreateInstance<T>(this T prefab, Vector3 pos = default, Quaternion quaternion = default,
             Transform parent = null) where T : MonoBehaviour
         {
             return parent is null
-                ? Object.Instantiate(prefab, pos, prefab.transform.rotation)
-                : Object.Instantiate(prefab, pos, prefab.transform.rotation, parent);
+                ? Object.Instantiate(prefab, pos, quaternion)
+                : Object.Instantiate(prefab, pos, quaternion, parent);
         }
 
         public static List<Transform> GetChildObject(this GameObject gameObject)

@@ -1,10 +1,11 @@
 ﻿using System.Threading;
+using Extensions.Random;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace GamePlay
 {
-    public class _InputGame 
+    public class _InputGame
     {
         private readonly _DataGenBlockSO _dataGenBlock;
         private readonly _DataSpriteBlock _dataSpriteBlock;
@@ -61,10 +62,12 @@ namespace GamePlay
 
         public void GenBlocks()
         {
+            var random = _dataSpriteBlock.RandomIndex;
             foreach (var input in _inputBlocks)
             {
                 var type = _dataRatioGenBlock.GetType(_DataGamePlay.Score);
-                input.GenBlock(_dataGenBlock.DicShapeBlock[type], _dataSpriteBlock.GetRandomSprite);
+                input.GenBlock(_dataGenBlock.DicShapeBlock[type], _dataSpriteBlock.IndexSprite(random));
+                random++;
             }
         }
 

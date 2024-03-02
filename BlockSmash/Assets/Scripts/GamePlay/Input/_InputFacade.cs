@@ -25,7 +25,7 @@ namespace GamePlay
             var box = gameObject.AddComponent<BoxCollider2D>();
             box.size = size;
             transform.position = pos;
-            _block = new _Block(dataCreateBlock, prefab, pos, dataInputGame, dataSpriteBlock.SpriteDisable, dataCreateBlock.ScaleBlock);
+            _block = new _Block(dataCreateBlock, prefab, pos, dataInputGame, dataSpriteBlock, dataCreateBlock.ScaleBlock);
             _inputLogic = new _InputLogic(cam, pos, _block, boardGame, dataInputGame, cts);
         }
 
@@ -38,11 +38,11 @@ namespace GamePlay
             _inputLogic.OnMouseDown();
         }
 
-        public void GenBlock(_ShapeBlock shape, Sprite sprite)
+        public void GenBlock(_ShapeBlock shape, int indexSprite)
         {
             _inputLogic.IsPut = false;
             _block.GenBlock(shape);
-            _block.SetSpriteBlock(sprite);
+            _block.SetSpriteBlock(indexSprite);
             _block.Trf.gameObject.SetActive(true);
             CheckSelect();
         }

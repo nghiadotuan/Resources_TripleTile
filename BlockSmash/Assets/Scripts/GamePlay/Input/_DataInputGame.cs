@@ -8,8 +8,8 @@ namespace GamePlay
         // list x va y cua block dang dc select.
         [ShowInInspector] public List<_DataXYShadow> ListXYShadow { get; } = new();
 
-        [ShowInInspector] public List<sbyte> ListXCheckFullRow { get; } = new();
-        [ShowInInspector] public List<sbyte> ListYCheckFullColumn { get; } = new();
+        [ShowInInspector] public List<sbyte> ListXCheckFullAColumn { get; } = new();
+        [ShowInInspector] public List<sbyte> ListYCheckFullARow { get; } = new();
 
         // lis x ma KHONG tao thanh hang.
         [ShowInInspector] public List<sbyte> ListXNotFull { get; } = new();
@@ -22,8 +22,8 @@ namespace GamePlay
         // kiem tra x, y cua block. neu x, y tao thanh 1 hang full -> add vao list check full
         public void SetListCheckFullRowAndColumn()
         {
-            ListXCheckFullRow.Clear();
-            ListYCheckFullColumn.Clear();
+            ListXCheckFullAColumn.Clear();
+            ListYCheckFullARow.Clear();
             ListXNotFull.Clear();
             ListXFull.Clear();
             ListYFull.Clear();
@@ -32,17 +32,17 @@ namespace GamePlay
             {
                 var x = data.XShadow;
                 var y = data.YShadow;
-                if (!ListXCheckFullRow.Contains(x))
-                    ListXCheckFullRow.Add(x);
-                if (!ListYCheckFullColumn.Contains(y))
-                    ListYCheckFullColumn.Add(y);
+                if (!ListXCheckFullAColumn.Contains(x))
+                    ListXCheckFullAColumn.Add(x);
+                if (!ListYCheckFullARow.Contains(y))
+                    ListYCheckFullARow.Add(y);
             }
         }
 
         // set list XY, neu khong tao thanh hang -> add list not full va nguoc lai.
         public void SetListXYFullRowAndColumn(_BoardGame boardGame)
         {
-            foreach (var x in ListXCheckFullRow)
+            foreach (var x in ListXCheckFullAColumn)
             {
                 if (boardGame.IsFullColumn(x))
                 {
@@ -54,7 +54,7 @@ namespace GamePlay
                 }
             }
 
-            foreach (var y in ListYCheckFullColumn)
+            foreach (var y in ListYCheckFullARow)
             {
                 if (boardGame.IsFullRow(y))
                 {

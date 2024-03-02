@@ -15,6 +15,7 @@ namespace GamePlay
         private readonly float _distanceCheckShadow;
         private readonly CancellationTokenSource _cts;
         private readonly _DataSpriteBlock _dataSpriteBlock;
+        private readonly _DataEffectSO _dataEffect;
 
         public _BoardGame(_GamePlayInit init, CancellationTokenSource cts)
         {
@@ -24,6 +25,7 @@ namespace GamePlay
             _prefabEntityBlock = init.PrefabEntityBlock;
             _distanceCheckShadow = init.DistanceCheckPutBlock;
             _dataSpriteBlock = init.DataSpriteBlock;
+            _dataEffect = init.DataEffect;
             _cts = cts;
             CreateBoard(init);
         }
@@ -57,7 +59,7 @@ namespace GamePlay
         private void CreateEntityBlock(sbyte x, sbyte y)
         {
             var pos = new Vector2(_posFirstBlock.x + x * _distanceEntityBlock, _posFirstBlock.y + y * _distanceEntityBlock);
-            var block = _prefabEntityBlock.CreateInstance(pos, _trfBoard);
+            var block = _prefabEntityBlock.CreateInstance(pos: pos, parent: _trfBoard);
 #if UNITY_EDITOR
             block.name = $"Block_{x}x{y}";
 #endif
@@ -114,7 +116,7 @@ namespace GamePlay
             return true;
         }
 
-        public void HighlightRow(int y, Sprite sprite)
+        public void HighlightRow(sbyte y, Sprite sprite)
         {
             for (var i = 0; i != _sizeBoard.x; i++)
             {
@@ -122,7 +124,7 @@ namespace GamePlay
             }
         }
 
-        public void SetRootSpriteRow(int y)
+        public void SetRootSpriteRow(sbyte y)
         {
             for (var i = 0; i != _sizeBoard.x; i++)
             {
@@ -130,8 +132,14 @@ namespace GamePlay
             }
         }
 
-        public async void DestroyRow(int y)
+        public async void DestroyRow(sbyte y, int indexGradientColor)
         {
+            var posX3 = GetEntityBlock(3, y).Pos;
+            var posX4 = GetEntityBlock(4, y).Pos;
+            var posEffect = posX3 + posX4;
+            posEffect /= 2;
+            var rotation = _dataEffect.PrefabEffectDestroyBlock.transform.rotation;
+            _dataEffect.PrefabEffectDestroyBlock.CreateInstance(posEffect, rotation).DoShow(_dataSpriteBlock.ColorEffect(indexGradientColor));
             for (var i = 0; i != _sizeBoard.x; i++)
             {
                 await UniTask.Delay(TimeSpan.FromSeconds(0.01f), cancellationToken: _cts.Token);
@@ -139,7 +147,7 @@ namespace GamePlay
             }
         }
 
-        public void HighlightColumn(int x, Sprite sprite)
+        public void HighlightColumn(sbyte x, Sprite sprite)
         {
             for (var i = 0; i != _sizeBoard.y; i++)
             {
@@ -147,7 +155,7 @@ namespace GamePlay
             }
         }
 
-        public void SetRootSpriteColumn(int x)
+        public void SetRootSpriteColumn(sbyte x)
         {
             for (var i = 0; i != _sizeBoard.y; i++)
             {
@@ -155,8 +163,15 @@ namespace GamePlay
             }
         }
 
-        public async void DestroyColumn(int x)
+        public async void DestroyColumn(sbyte x, int indexGradientColor)
         {
+            var posX3 = GetEntityBlock(x, 3).Pos;
+            var posX4 = GetEntityBlock(x, 4).Pos;
+            var posEffect = posX3 + posX4;
+            posEffect /= 2;
+            var rotation = _dataEffect.PrefabEffectDestroyBlock.transform.rotation;
+            rotation.eulerAngles = new Vector3(90, 90, 0);
+            _dataEffect.PrefabEffectDestroyBlock.CreateInstance(posEffect, rotation).DoShow(_dataSpriteBlock.ColorEffect(indexGradientColor));
             for (var i = 0; i != _sizeBoard.y; i++)
             {
                 await UniTask.Delay(TimeSpan.FromSeconds(0.01f), cancellationToken: _cts.Token);

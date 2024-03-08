@@ -4,11 +4,11 @@ using UnityEngine;
 
 namespace GamePlay
 {
-    public class _SpriteRendererEntityBlock
+    public class _SpriteRendererPieceBlock
     {
         private readonly SpriteRenderer _spriteRenderer;
 
-        public _SpriteRendererEntityBlock(SpriteRenderer spriteRenderer)
+        public _SpriteRendererPieceBlock(SpriteRenderer spriteRenderer)
         {
             _spriteRenderer = spriteRenderer;
             _spriteRenderer.sortingOrder = 1;
@@ -36,19 +36,16 @@ namespace GamePlay
         {
             RootSprite = sprite;
             _spriteRenderer.sprite = sprite;
-            //MyDebug.Log("Set sprite block "+ _spriteRenderer.gameObject.name, ColorDebugEnum.Blue);
         }
 
         public void SetHighLightSprite(Sprite sprite)
         {
             _spriteRenderer.sprite = sprite;
-            //MyDebug.Log("Set Highlight block "+ _spriteRenderer.gameObject.name, ColorDebugEnum.Yellow);
         }
 
         public void SetRootSprite()
         {
             _spriteRenderer.sprite = RootSprite;
-           // MyDebug.Log("Set Root block "+ _spriteRenderer.gameObject.name, ColorDebugEnum.Red);
         }
     }
 }

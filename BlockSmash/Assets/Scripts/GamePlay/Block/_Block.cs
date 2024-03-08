@@ -1,4 +1,5 @@
-﻿using DG.Tweening;
+﻿using System.Threading;
+using DG.Tweening;
 using Extensions.GameObjects;
 using UnityEngine;
 
@@ -11,17 +12,20 @@ namespace GamePlay
         private readonly _DataInputGame _dataInputGame;
         private readonly _DataSpriteBlock _dataSpriteBlock;
         private readonly float _scaleBlock;
+        private readonly CancellationTokenSource _cts;
 
         public _Block
         (
             _DataCreateBlock dataCreateBlock,
-            _EntityBlockFacade prefab,
+            GameObject prefab,
             Vector2 posInputBlock,
             _DataInputGame dataInputGame,
             _DataSpriteBlock dataSpriteBlock,
-            float scaleBlock
+            float scaleBlock,
+            CancellationTokenSource cts
         )
         {
+            _cts = cts;
             Trf = new GameObject().transform;
             _posInputBlock = posInputBlock;
 #if UNITY_EDITOR
@@ -34,7 +38,7 @@ namespace GamePlay
             _scaleBlock = scaleBlock;
         }
 
-        private _EntityBlockFacade[,] _matrixEntitiesBlock;
+        private _PieceBlockFacade[,] _matrixEntitiesBlock;
         private int _numEntityBlock;
         private int _indexSprite;
 
@@ -42,20 +46,21 @@ namespace GamePlay
         public byte IndexSprite { get; set; }
         public bool IsPut { get; private set; }
 
-        private void CreateEntities(_DataCreateBlock dataCreateBlock, _EntityBlockFacade prefab)
+        private void CreateEntities(_DataCreateBlock dataCreateBlock, GameObject prefab)
         {
             // tai sao la 5: vi block dai nhat  co 5 entity block.  
-            _matrixEntitiesBlock = new _EntityBlockFacade[5, 5];
+            _matrixEntitiesBlock = new _PieceBlockFacade[5, 5];
             for (var i = 0; i != 5; i++)
             {
                 for (var j = 0; j != 5; j++)
                 {
-                    var block = prefab.CreateInstance(Trf);
-                    block.transform.localPosition = dataCreateBlock.PosLocalEntityBlock[j, i];
-                    block.SetActive(false);
-                    _matrixEntitiesBlock[j, i] = block;
-                    block.SetXY((sbyte) (j), (sbyte) (i));
-                    block.SpriteRenderer.SetSortingOrder(2);
+                    var go = prefab.CreateGameObject(Trf);
+                    go.transform.localPosition = dataCreateBlock.PosLocalEntityBlock[j, i];
+                    go.SetActive(false);
+                    var pieceBlock = new _PieceBlockFacade(go.transform, _cts);
+                    _matrixEntitiesBlock[j, i] = pieceBlock;
+                    pieceBlock.SetXY((sbyte) (j), (sbyte) (i));
+                    pieceBlock.SpriteRenderer.SetSortingOrder(2);
                 }
             }
         }
@@ -74,7 +79,7 @@ namespace GamePlay
                     var isActive = shapeBlock[j, i];
                     block.SetActive(isActive);
                     if (!isActive) continue;
-                    block.transform.localPosition = _dataCreateBlock.PosLocalEntityBlock[j, i];
+                    block.Trf.localPosition = _dataCreateBlock.PosLocalEntityBlock[j, i];
                     pos += _dataCreateBlock.PosLocalEntityBlock[j, i];
                     _numEntityBlock++;
                 }
@@ -87,9 +92,9 @@ namespace GamePlay
                 for (var j = 0; j != _matrixEntitiesBlock.GetLength(0); j++)
                 {
                     if (!_matrixEntitiesBlock[j, i].IsActive) continue;
-                    Vector2 p = _matrixEntitiesBlock[j, i].transform.localPosition;
+                    Vector2 p = _matrixEntitiesBlock[j, i].Trf.localPosition;
                     p -= pos;
-                    _matrixEntitiesBlock[j, i].transform.localPosition = p;
+                    _matrixEntitiesBlock[j, i].Trf.localPosition = p;
                 }
             }
 
@@ -265,9 +270,8 @@ namespace GamePlay
                 {
                     var newX = (sbyte) (xCheck + entity.X);
                     var newY = (sbyte) (yCheck + entity.Y);
-                    // MyDebug.Log(newX + "  " + newY + "  " + x + "  " + y);
                     var entityBoardGame = boardGame.GetEntityBlock(newX, newY);
-                    if (!entityBoardGame) return false;
+                    if (entityBoardGame == null) return false;
                     if (entityBoardGame.IsActive) return false;
                 }
             }

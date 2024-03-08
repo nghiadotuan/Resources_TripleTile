@@ -53,7 +53,7 @@ namespace GamePlay
                     mainCamera,
                     gamePlayInit.InitInput.PosInput[i],
                     size, gamePlayInit.DataCreateBlock,
-                    gamePlayInit.PrefabEntityBlock, boardGame,
+                    gamePlayInit.PrefabPieceBlock, boardGame,
                     _dataInputGame,
                     _dataSpriteBlock, _cts
                 );

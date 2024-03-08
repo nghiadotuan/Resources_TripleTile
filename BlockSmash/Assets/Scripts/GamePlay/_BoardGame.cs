@@ -11,7 +11,7 @@ namespace GamePlay
         private readonly Vector2Int _sizeBoard;
         private readonly Vector2 _posFirstBlock;
         private readonly float _distanceEntityBlock;
-        private readonly _EntityBlockFacade _prefabEntityBlock;
+        private readonly GameObject _prefabPieceBlock;
         private readonly float _distanceCheckShadow;
         private readonly CancellationTokenSource _cts;
         private readonly _DataSpriteBlock _dataSpriteBlock;
@@ -22,7 +22,7 @@ namespace GamePlay
             _sizeBoard = init.InitBoard.SizeBoard;
             _posFirstBlock = init.InitBoard.PosFirstBlock;
             _distanceEntityBlock = init.DistanceEntityBlock;
-            _prefabEntityBlock = init.PrefabEntityBlock;
+            _prefabPieceBlock = init.PrefabPieceBlock;
             _distanceCheckShadow = init.DistanceCheckPutBlock;
             _dataSpriteBlock = init.DataSpriteBlock;
             _dataEffect = init.DataEffect;
@@ -31,9 +31,9 @@ namespace GamePlay
         }
 
         private Transform _trfBoard;
-        private _EntityBlockFacade[,] _matrixEntityBlocks;
+        private _PieceBlockFacade[,] _matrixEntityBlocks;
 
-        public _EntityBlockFacade[,] MatrixEntityBlocks => _matrixEntityBlocks;
+        public _PieceBlockFacade[,] MatrixEntityBlocks => _matrixEntityBlocks;
 
         private void CreateBoard(_GamePlayInit init)
         {
@@ -46,31 +46,32 @@ namespace GamePlay
 
         private void CreateEntityBlocksBoard()
         {
-            _matrixEntityBlocks = new _EntityBlockFacade[_sizeBoard.x, _sizeBoard.y];
+            _matrixEntityBlocks = new _PieceBlockFacade[_sizeBoard.x, _sizeBoard.y];
             for (var i = 0; i != _sizeBoard.y; i++)
             {
                 for (var j = 0; j != _sizeBoard.x; j++)
                 {
-                    CreateEntityBlock((sbyte) j, (sbyte) i);
+                    CreatePieceBlock((sbyte) j, (sbyte) i);
                 }
             }
         }
 
-        private void CreateEntityBlock(sbyte x, sbyte y)
+        private void CreatePieceBlock(sbyte x, sbyte y)
         {
             var pos = new Vector2(_posFirstBlock.x + x * _distanceEntityBlock, _posFirstBlock.y + y * _distanceEntityBlock);
-            var block = _prefabEntityBlock.CreateInstance(pos: pos, parent: _trfBoard);
+            var block = _prefabPieceBlock.CreateGameObject(pos: pos, parent: _trfBoard);
 #if UNITY_EDITOR
             block.name = $"Block_{x}x{y}";
 #endif
             block.gameObject.SetActive(false);
-            block.SetXY(x, y);
-            block.SpriteRenderer.SetShadowSprite();
-            _matrixEntityBlocks[x, y] = block;
+            var pieceBlock = new _PieceBlockFacade(block.transform, _cts);
+            pieceBlock.SetXY(x, y);
+            pieceBlock.SpriteRenderer.SetShadowSprite();
+            _matrixEntityBlocks[x, y] = pieceBlock;
             block.transform.localScale = Vector3.one * .986f;
         }
 
-        public _EntityBlockFacade GetEntityBlock(sbyte x, sbyte y)
+        public _PieceBlockFacade GetEntityBlock(sbyte x, sbyte y)
         {
             if (x < 0 || y < 0) return null;
             if (x >= _sizeBoard.x || y >= _sizeBoard.y) return null;
@@ -84,12 +85,12 @@ namespace GamePlay
             return true;
         }
 
-        public (sbyte, sbyte) GetIDShowShadow(_EntityBlockFacade entity)
+        public (sbyte, sbyte) GetIDShowShadow(_PieceBlockFacade piece)
         {
             foreach (var shadow in _matrixEntityBlocks)
             {
                 if (shadow.IsActive) continue;
-                if (!IsShadow(entity.Pos, shadow.Pos)) continue;
+                if (!IsShadow(piece.Pos, shadow.Pos)) continue;
                 return (shadow.X, shadow.Y);
             }
 

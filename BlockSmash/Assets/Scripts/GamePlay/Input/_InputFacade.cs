@@ -15,7 +15,7 @@ namespace GamePlay
             Vector2 pos,
             Vector2 size,
             _DataCreateBlock dataCreateBlock,
-            _EntityBlockFacade prefab,
+            GameObject prefab,
             _BoardGame boardGame,
             _DataInputGame dataInputGame,
             _DataSpriteBlock dataSpriteBlock,
@@ -25,7 +25,7 @@ namespace GamePlay
             var box = gameObject.AddComponent<BoxCollider2D>();
             box.size = size;
             transform.position = pos;
-            _block = new _Block(dataCreateBlock, prefab, pos, dataInputGame, dataSpriteBlock, dataCreateBlock.ScaleBlock);
+            _block = new _Block(dataCreateBlock, prefab, pos, dataInputGame, dataSpriteBlock, dataCreateBlock.ScaleBlock, cts);
             _inputLogic = new _InputLogic(cam, pos, _block, boardGame, dataInputGame, cts);
         }
 

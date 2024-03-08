@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace GamePlay
 {
@@ -17,7 +18,7 @@ namespace GamePlay
 
         [SerializeField, TabGroup("Common")] private float _distanceEntityBlock;
         [SerializeField, TabGroup("Common")] private float _distanceCheckPutBlock;
-        [SerializeField, TabGroup("Common")] private _EntityBlockFacade _prefabEntityBlock;
+        [SerializeField, TabGroup("Common")] private GameObject _prefabPieceBlock;
 
         public void Init()
         {
@@ -27,12 +28,12 @@ namespace GamePlay
         public _InitBoard InitBoard => _initBoard;
         public _InitInput InitInput => _initInput;
         public _DataCreateBlock DataCreateBlock => _dataCreateBlock;
-        public _DataSpriteBlock DataSpriteBlock => _listDataSpriteBlock[Random.Range(0, _listDataSpriteBlock.Count-1)];
+        public _DataSpriteBlock DataSpriteBlock => _listDataSpriteBlock[Random.Range(0, _listDataSpriteBlock.Count - 1)];
         public _DataRatioGenBlockSO DataRatioGenBlockSo => _dataRatioGenBlock;
         public _DataCameraDefault DataCameraDefault => _dataCameraDefault;
         public _DataEffectSO DataEffect => _dataEffect;
         public float DistanceEntityBlock => _distanceEntityBlock;
         public float DistanceCheckPutBlock => _distanceCheckPutBlock;
-        public _EntityBlockFacade PrefabEntityBlock => _prefabEntityBlock;
+        public GameObject PrefabPieceBlock => _prefabPieceBlock;
     }
 }

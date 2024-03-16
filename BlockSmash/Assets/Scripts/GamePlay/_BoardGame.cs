@@ -134,12 +134,17 @@ namespace GamePlay
             }
         }
 
+        private Vector2 PosEffect(sbyte value, bool isRow)
+        {
+            var posX3 = GetEntityBlock((sbyte)(isRow ? 3 : value) , (sbyte)(isRow ? value: 3)).Pos;
+            var posX4 = GetEntityBlock((sbyte)(isRow ? 4 : value) , (sbyte)(isRow ? value: 4)).Pos;
+            var posEffect = posX3 + posX4;
+            return posEffect / 2;
+        }
+
         public async void DestroyRow(sbyte y, int indexGradientColor)
         {
-            var posX3 = GetEntityBlock(3, y).Pos;
-            var posX4 = GetEntityBlock(4, y).Pos;
-            var posEffect = posX3 + posX4;
-            posEffect /= 2;
+            var posEffect = PosEffect(y, true);
             var rotation = _dataEffect.PrefabEffectDestroyBlock.transform.rotation;
             _dataEffect.PrefabEffectDestroyBlock.CreateInstance(posEffect, rotation).DoShow(_dataSpriteBlock.ColorEffect(indexGradientColor));
             for (var i = 0; i != _sizeBoard.x; i++)
@@ -167,10 +172,7 @@ namespace GamePlay
 
         public async void DestroyColumn(sbyte x, int indexGradientColor)
         {
-            var posX3 = GetEntityBlock(x, 3).Pos;
-            var posX4 = GetEntityBlock(x, 4).Pos;
-            var posEffect = posX3 + posX4;
-            posEffect /= 2;
+            var posEffect =PosEffect(x, false);
             var rotation = _dataEffect.PrefabEffectDestroyBlock.transform.rotation;
             rotation.eulerAngles = new Vector3(90, 90, 0);
             _dataEffect.PrefabEffectDestroyBlock.CreateInstance(posEffect, rotation).DoShow(_dataSpriteBlock.ColorEffect(indexGradientColor));

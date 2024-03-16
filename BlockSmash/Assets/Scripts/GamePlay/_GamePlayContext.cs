@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using Cysharp.Threading.Tasks;
+using Extensions.MyPoolObject;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -17,6 +18,7 @@ namespace GamePlay
 
         private void Awake()
         {
+            _PoolObject.Dispose();
             SetFPS();
             _cts = new CancellationTokenSource();
             Input.multiTouchEnabled = false;

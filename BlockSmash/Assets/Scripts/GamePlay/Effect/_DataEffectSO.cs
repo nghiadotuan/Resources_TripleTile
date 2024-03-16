@@ -6,7 +6,7 @@ namespace GamePlay
     [Serializable]
     public class _DataEffectSO
     {
-        [SerializeField] private _EffectDestroyBlock _prefabEffectDestroyBlock;
-        public _EffectDestroyBlock PrefabEffectDestroyBlock => _prefabEffectDestroyBlock;
+        [SerializeField] private GameObject _prefabEffectDestroyBlock;
+        public GameObject PrefabEffectDestroyBlock => _prefabEffectDestroyBlock;
     }
 }

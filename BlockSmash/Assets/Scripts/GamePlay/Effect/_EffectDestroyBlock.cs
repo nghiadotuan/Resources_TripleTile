@@ -1,12 +1,20 @@
 ﻿using System;
 using Cysharp.Threading.Tasks;
+using Extensions.MyPoolObject;
 using UnityEngine;
 
 namespace GamePlay
 {
-    public class _EffectDestroyBlock : MonoBehaviour
+    public class _EffectDestroyBlock : MonoBehaviour, _IPoolAble
     {
         [SerializeField] private ParticleSystem[] _dust;
+
+        private Transform _trf;
+
+        private void Awake()
+        {
+            _trf = transform;
+        }
 
         public void DoShow(ParticleSystem.MinMaxGradient color)
         {
@@ -16,13 +24,36 @@ namespace GamePlay
                 colorLifeTime.color = color;
             }
 
-            WaiDestroy().Forget();
+            WaiDeActive().Forget();
         }
 
-        private async UniTask WaiDestroy()
+        private async UniTask WaiDeActive()
         {
-            await UniTask.Delay(TimeSpan.FromSeconds(3), cancellationToken: this.GetCancellationTokenOnDestroy());
-            Destroy(gameObject);
+            Active();
+            await UniTask.Delay(TimeSpan.FromSeconds(2), cancellationToken: this.GetCancellationTokenOnDestroy());
+            Deactivate();
+        }
+
+        public bool IsActive { get; private set; }
+
+        public void Active()
+        {
+            IsActive = true;
+            gameObject.SetActive(true);
+            GetComponent<ParticleSystem>().Play();
+        }
+
+        public void Deactivate()
+        {
+            IsActive = false;
+            gameObject.SetActive(false);
+        }
+
+        public GameObject GetGameObject(Vector3 pos, Quaternion rotation)
+        {
+            _trf.position = pos;
+            _trf.rotation = rotation;
+            return gameObject;
         }
     }
 }

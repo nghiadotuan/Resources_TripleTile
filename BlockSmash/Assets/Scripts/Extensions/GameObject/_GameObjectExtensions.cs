@@ -26,7 +26,7 @@ namespace Extensions.GameObjects
         {
             return parent is null
                 ? Object.Instantiate(prefab, pos, quaternion)
-                : Object.Instantiate(prefab, pos, default, parent);
+                : Object.Instantiate(prefab, pos, quaternion, parent);
         }
 
         public static GameObject CreateGameObject(this GameObject prefab, Vector3 pos, Transform parent = null)

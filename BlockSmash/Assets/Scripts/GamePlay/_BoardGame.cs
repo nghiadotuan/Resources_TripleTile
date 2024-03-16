@@ -2,6 +2,7 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Extensions.GameObjects;
+using Extensions.MyPoolObject;
 using UnityEngine;
 
 namespace GamePlay
@@ -146,7 +147,9 @@ namespace GamePlay
         {
             var posEffect = PosEffect(y, true);
             var rotation = _dataEffect.PrefabEffectDestroyBlock.transform.rotation;
-            _dataEffect.PrefabEffectDestroyBlock.CreateInstance(posEffect, rotation).DoShow(_dataSpriteBlock.ColorEffect(indexGradientColor));
+            _dataEffect.PrefabEffectDestroyBlock
+                .GetPool<_EffectDestroyBlock>(posEffect, rotation)
+                .DoShow(_dataSpriteBlock.ColorEffect(indexGradientColor));
             for (var i = 0; i != _sizeBoard.x; i++)
             {
                 await UniTask.Delay(TimeSpan.FromSeconds(0.01f), cancellationToken: _cts.Token);
@@ -175,7 +178,9 @@ namespace GamePlay
             var posEffect =PosEffect(x, false);
             var rotation = _dataEffect.PrefabEffectDestroyBlock.transform.rotation;
             rotation.eulerAngles = new Vector3(90, 90, 0);
-            _dataEffect.PrefabEffectDestroyBlock.CreateInstance(posEffect, rotation).DoShow(_dataSpriteBlock.ColorEffect(indexGradientColor));
+            _dataEffect.PrefabEffectDestroyBlock
+                .GetPool<_EffectDestroyBlock>(posEffect, rotation)
+                .DoShow(_dataSpriteBlock.ColorEffect(indexGradientColor));
             for (var i = 0; i != _sizeBoard.y; i++)
             {
                 await UniTask.Delay(TimeSpan.FromSeconds(0.01f), cancellationToken: _cts.Token);
@@ -183,6 +188,7 @@ namespace GamePlay
             }
         }
 
+        //TODO: hard code, refactor
         public async UniTask WaitDisableAllEntityBlockWhenGameOver()
         {
             ChangeRowSpiteWhenGameOver(3, 4, 3);

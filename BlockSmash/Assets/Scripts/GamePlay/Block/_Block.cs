@@ -229,7 +229,7 @@ namespace GamePlay
         // Block co the chon dc khi no con cho.
         public bool IsBlockCanSelect(_BoardGame boardGame)
         {
-            foreach (var entity in boardGame.MatrixEntityBlocks)
+            foreach (var entity in boardGame.MatrixPieceBlocks)
             {
                 if (entity.IsActive) continue;
                 if (IsCheckXYBlockToSelect(entity.X, entity.Y, boardGame))

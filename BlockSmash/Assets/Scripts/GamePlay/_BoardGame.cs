@@ -31,9 +31,9 @@ namespace GamePlay
         }
 
         private Transform _trfBoard;
-        private _PieceBlockFacade[,] _matrixEntityBlocks;
+        private _PieceBlockFacade[,] _matrixPieceBlocks;
 
-        public _PieceBlockFacade[,] MatrixEntityBlocks => _matrixEntityBlocks;
+        public _PieceBlockFacade[,] MatrixPieceBlocks => _matrixPieceBlocks;
 
         private void CreateBoard(_GamePlayInit init)
         {
@@ -46,7 +46,7 @@ namespace GamePlay
 
         private void CreateEntityBlocksBoard()
         {
-            _matrixEntityBlocks = new _PieceBlockFacade[_sizeBoard.x, _sizeBoard.y];
+            _matrixPieceBlocks = new _PieceBlockFacade[_sizeBoard.x, _sizeBoard.y];
             for (var i = 0; i != _sizeBoard.y; i++)
             {
                 for (var j = 0; j != _sizeBoard.x; j++)
@@ -67,7 +67,7 @@ namespace GamePlay
             var pieceBlock = new _PieceBlockFacade(block.transform, _cts);
             pieceBlock.SetXY(x, y);
             pieceBlock.SpriteRenderer.SetShadowSprite();
-            _matrixEntityBlocks[x, y] = pieceBlock;
+            _matrixPieceBlocks[x, y] = pieceBlock;
             block.transform.localScale = Vector3.one * .986f;
         }
 
@@ -75,7 +75,7 @@ namespace GamePlay
         {
             if (x < 0 || y < 0) return null;
             if (x >= _sizeBoard.x || y >= _sizeBoard.y) return null;
-            return _matrixEntityBlocks[x, y];
+            return _matrixPieceBlocks[x, y];
         }
 
         private bool IsShadow(Vector3 pos1, Vector3 pos2)
@@ -87,13 +87,14 @@ namespace GamePlay
 
         public (sbyte, sbyte) GetIDShowShadow(_PieceBlockFacade piece)
         {
-            foreach (var shadow in _matrixEntityBlocks)
+            foreach (var shadow in _matrixPieceBlocks)
             {
                 if (shadow.IsActive) continue;
                 if (!IsShadow(piece.Pos, shadow.Pos)) continue;
                 return (shadow.X, shadow.Y);
             }
 
+            // khong co id piece block nao phu hop, return gia tri so am.
             return (-1, -1);
         }
 
@@ -101,7 +102,7 @@ namespace GamePlay
         {
             for (var i = 0; i != _sizeBoard.x; i++)
             {
-                if (!_matrixEntityBlocks[i, y].IsActive) return false;
+                if (!_matrixPieceBlocks[i, y].IsActive) return false;
             }
 
             return true;
@@ -111,7 +112,7 @@ namespace GamePlay
         {
             for (var i = 0; i != _sizeBoard.y; i++)
             {
-                if (!_matrixEntityBlocks[x, i].IsActive) return false;
+                if (!_matrixPieceBlocks[x, i].IsActive) return false;
             }
 
             return true;
@@ -121,7 +122,7 @@ namespace GamePlay
         {
             for (var i = 0; i != _sizeBoard.x; i++)
             {
-                _matrixEntityBlocks[i, y].SpriteRenderer.SetHighLightSprite(sprite);
+                _matrixPieceBlocks[i, y].SpriteRenderer.SetHighLightSprite(sprite);
             }
         }
 
@@ -129,7 +130,7 @@ namespace GamePlay
         {
             for (var i = 0; i != _sizeBoard.x; i++)
             {
-                _matrixEntityBlocks[i, y].SpriteRenderer.SetRootSprite();
+                _matrixPieceBlocks[i, y].SpriteRenderer.SetRootSprite();
             }
         }
 
@@ -144,7 +145,7 @@ namespace GamePlay
             for (var i = 0; i != _sizeBoard.x; i++)
             {
                 await UniTask.Delay(TimeSpan.FromSeconds(0.01f), cancellationToken: _cts.Token);
-                _matrixEntityBlocks[i, y].Destroy();
+                _matrixPieceBlocks[i, y].Destroy();
             }
         }
 
@@ -152,7 +153,7 @@ namespace GamePlay
         {
             for (var i = 0; i != _sizeBoard.y; i++)
             {
-                _matrixEntityBlocks[x, i].SpriteRenderer.SetHighLightSprite(sprite);
+                _matrixPieceBlocks[x, i].SpriteRenderer.SetHighLightSprite(sprite);
             }
         }
 
@@ -160,7 +161,7 @@ namespace GamePlay
         {
             for (var i = 0; i != _sizeBoard.y; i++)
             {
-                _matrixEntityBlocks[x, i].SpriteRenderer.SetRootSprite();
+                _matrixPieceBlocks[x, i].SpriteRenderer.SetRootSprite();
             }
         }
 
@@ -176,7 +177,7 @@ namespace GamePlay
             for (var i = 0; i != _sizeBoard.y; i++)
             {
                 await UniTask.Delay(TimeSpan.FromSeconds(0.01f), cancellationToken: _cts.Token);
-                _matrixEntityBlocks[x, i].Destroy();
+                _matrixPieceBlocks[x, i].Destroy();
             }
         }
 
@@ -204,7 +205,7 @@ namespace GamePlay
 
         public void ResetBoardGame()
         {
-            foreach (var entity in _matrixEntityBlocks)
+            foreach (var entity in _matrixPieceBlocks)
             {
                 entity.SetActive(false);
             }
@@ -214,7 +215,7 @@ namespace GamePlay
         {
             for (var i = startX; i <= endX; i++)
             {
-                var entity = _matrixEntityBlocks[i, y];
+                var entity = _matrixPieceBlocks[i, y];
                 entity.SetActive(true);
                 entity.SpriteRenderer.SetHighLightSprite(_dataSpriteBlock.GetRandomSprite);
             }
@@ -224,7 +225,7 @@ namespace GamePlay
         {
             for (var i = startY; i <= endY; i++)
             {
-                var entity = _matrixEntityBlocks[x, i];
+                var entity = _matrixPieceBlocks[x, i];
                 entity.SetActive(true);
                 entity.SpriteRenderer.SetHighLightSprite(_dataSpriteBlock.GetRandomSprite);
             }

@@ -19,6 +19,8 @@ namespace GamePlay
 
             return _listData[0].GetTypeBlock();
         }
+
+        public _TypeBlockEnum EasyType => _listData[0].GetTypeBlock();
     }
 
     [Serializable]

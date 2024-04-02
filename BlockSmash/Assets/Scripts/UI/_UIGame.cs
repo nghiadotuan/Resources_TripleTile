@@ -26,7 +26,21 @@ namespace UI
 
         public void CreateBtnBooster(Vector2[] posBlocks)
         {
+        }
 
+        public void OnClickBtnShuffle()
+        {
+            _EventGamePlay.GenEasyBlock?.Invoke();
+        }
+
+        public void OnClickBtnLittleBoom()
+        {
+            _EventGamePlay.UseLittleBoom?.Invoke();
+        }
+
+        public void OnClickBtnBigBoom()
+        {
+            _EventGamePlay.UseBigBoom?.Invoke();
         }
     }
 }

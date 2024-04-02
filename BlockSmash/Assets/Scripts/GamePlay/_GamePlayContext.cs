@@ -45,7 +45,7 @@ namespace GamePlay
         // board game: chua cac entity block
         private void CreateBoardGame()
         {
-            _boardGame = new _BoardGame(_gamePlayInit,_cts);
+            _boardGame = new _BoardGame(_gamePlayInit, _cts);
         }
 
         // logic bat su kien user cham vao block
@@ -69,6 +69,18 @@ namespace GamePlay
         {
             _cts?.Cancel();
             _cts?.Dispose();
+        }
+
+        [Button]
+        private void DestroyRowOrColumnMostPiece()
+        {
+            _boardGame.LogicCheckMatrixPieceBlock.DestroyRowOrColumnMostPieceBlocks();
+        }
+
+        [Button]
+        private void DestroyPlusShapeBlock()
+        {
+            _boardGame.LogicCheckMatrixPieceBlock.DestroyPlusBlock();
         }
     }
 }

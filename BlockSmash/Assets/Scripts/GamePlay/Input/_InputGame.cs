@@ -1,5 +1,4 @@
 ﻿using System.Threading;
-using Extensions.Random;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -28,6 +27,7 @@ namespace GamePlay
             CreateInputs(gamePlayInit, mainCamera, boardGame);
             _dataGenBlock = gamePlayInit.DataCreateBlock.DataGenBlock;
             _EventGamePlay.NextGenBlock = NextGenBlock;
+            _EventGamePlay.GenEasyBlock = GenEasyBlocks;
             _EventGamePlay.IsGameOver = IsGameOver;
         }
 
@@ -79,6 +79,14 @@ namespace GamePlay
             }
 
             GenBlocks();
+        }
+
+        private void GenEasyBlocks()
+        {
+            foreach (var input in _inputBlocks)
+            {
+                input.GenBlock(_dataGenBlock.DicShapeBlock[_dataRatioGenBlock.EasyType], _dataSpriteBlock.IndexSprite(_dataSpriteBlock.RandomIndex));
+            }
         }
 
         private bool IsGameOver()

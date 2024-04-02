@@ -47,6 +47,12 @@ namespace GamePlay
             CheckSelect();
         }
 
+        [Button]
+        private void GenBlockTest()
+        {
+            _EventGamePlay.GenEasyBlock?.Invoke();
+        }
+        
 #if UNITY_EDITOR
 
         [SerializeField] private _DataGenBlockSO _data;

@@ -17,6 +17,7 @@ namespace GamePlay
         private readonly CancellationTokenSource _cts;
         private readonly _DataSpriteBlock _dataSpriteBlock;
         private readonly _DataEffectSO _dataEffect;
+        private readonly _LogicCheckMatrixPieceBlock _logicCheckMatrixPieceBlock;
 
         public _BoardGame(_GamePlayInit init, CancellationTokenSource cts)
         {
@@ -29,12 +30,14 @@ namespace GamePlay
             _dataEffect = init.DataEffect;
             _cts = cts;
             CreateBoard(init);
+            _logicCheckMatrixPieceBlock = new _LogicCheckMatrixPieceBlock(_matrixPieceBlocks, _sizeBoard, this);
         }
 
         private Transform _trfBoard;
         private _PieceBlockFacade[,] _matrixPieceBlocks;
 
         public _PieceBlockFacade[,] MatrixPieceBlocks => _matrixPieceBlocks;
+        public _LogicCheckMatrixPieceBlock LogicCheckMatrixPieceBlock => _logicCheckMatrixPieceBlock;
 
         private void CreateBoard(_GamePlayInit init)
         {
